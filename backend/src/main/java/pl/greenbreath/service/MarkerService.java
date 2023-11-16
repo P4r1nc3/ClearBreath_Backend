@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.greenbreath.model.Marker;
 import pl.greenbreath.repository.MarkerRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -13,6 +14,10 @@ import java.util.Optional;
 @AllArgsConstructor
 public class MarkerService {
     private MarkerRepository markerRepository;
+
+    public List<Marker> getAllMarkers() {
+        return markerRepository.findAll();
+    }
 
     public void saveMarker(double lat, double lng) {
         log.info("Saving marker with coordinates: Lat: " + lat + " Lng: " + lng);
