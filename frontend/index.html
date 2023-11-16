@@ -131,7 +131,7 @@
                 }
             };
 
-            var urlLoadMarkers = "http://localhost:8080/marker/all";
+            var urlLoadMarkers = "http://localhost:8080/markers";
             xhrLoadMarkers.open("GET", urlLoadMarkers, true);
             xhrLoadMarkers.send();
         }
@@ -148,7 +148,7 @@
                 }
             };
 
-            var urlSavePoint = "http://localhost:8080/marker?lat=" + lat + "&lng=" + lng;
+            var urlSavePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
             xhrSavePoint.open("POST", urlSavePoint, true);
             xhrSavePoint.send();
         }
@@ -165,7 +165,7 @@
                 }
             };
 
-            var urlDeletePoint = "http://localhost:8080/marker?lat=" + lat + "&lng=" + lng;
+            var urlDeletePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
             xhrDeletePoint.open("DELETE", urlDeletePoint, true);
             xhrDeletePoint.send();
         }
