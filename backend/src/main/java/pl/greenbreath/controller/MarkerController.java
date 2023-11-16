@@ -15,6 +15,11 @@ import java.util.List;
 public class MarkerController {
     private MarkerService markerService;
 
+    @GetMapping("/all")
+    public List<Marker> getAllMarkers() {
+        return markerService.getAllMarkers();
+    }
+
     @PostMapping()
     public String saveMarker(@RequestParam double lat, @RequestParam double lng) {
         markerService.saveMarker(lat, lng);
