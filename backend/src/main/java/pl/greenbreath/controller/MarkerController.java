@@ -10,23 +10,23 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/marker")
+@RequestMapping("/markers")
 @CrossOrigin(origins = "http://localhost:63343")
 public class MarkerController {
     private MarkerService markerService;
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Marker> getAllMarkers() {
         return markerService.getAllMarkers();
     }
 
-    @PostMapping()
+    @PostMapping
     public String saveMarker(@RequestParam double lat, @RequestParam double lng) {
         markerService.saveMarker(lat, lng);
         return "Point saved successfully!";
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     public String deleteMarker(@RequestParam double lat, @RequestParam double lng) {
         markerService.deleteMarker(lat, lng);
         return "Point deleted successfully!";
