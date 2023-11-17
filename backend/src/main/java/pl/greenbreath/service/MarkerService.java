@@ -1,10 +1,14 @@
 package pl.greenbreath.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.greenbreath.model.Marker;
+import pl.greenbreath.model.User;
 import pl.greenbreath.repository.MarkerRepository;
+import pl.greenbreath.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,27 +19,27 @@ import java.util.Optional;
 public class MarkerService {
     private MarkerRepository markerRepository;
 
-    public List<Marker> getAllMarkers() {
-        return markerRepository.findAll();
+    public List<Marker> getAllMarkers(User user) {
+        return markerRepository.findByUser(user);
     }
 
-    public void saveMarker(double lat, double lng) {
-        log.info("Saving marker with coordinates: Lat: " + lat + " Lng: " + lng);
+    public Marker getMarker(double lat, double lng, User user) {
+        return markerRepository.findByLatAndLngAndUser(lat, lng, user)
+                .orElseThrow(() -> new EntityNotFoundException("Marker not found for lat: " + lat + ", lng: " + lng + ", and user: " + user.getUserId()));
+    }
+
+    public void saveMarker(double lat, double lng, User user) {
         Marker marker = Marker.builder()
                 .lat(lat)
                 .lng(lng)
+                .user(user)
                 .build();
         markerRepository.save(marker);
     }
 
-    public void deleteMarker(double lat, double lng) {
-        Optional<Marker> markerToDelete = markerRepository.findByLatAndLng(lat, lng);
-        log.info("Deleting marker with coordinates: Lat: " + lat + " Lng: " + lng);
-
-        if (markerToDelete.isPresent()) {
-            markerRepository.delete(markerToDelete.get());
-        } else {
-            throw new IllegalArgumentException("Marker not found for coordinates: Lat=" + lat + ", Lng=" + lng);
-        }
+    public void deleteMarker(double lat, double lng, User user) {
+        Marker marker = markerRepository.findByLatAndLngAndUser(lat, lng, user)
+                .orElseThrow(() -> new EntityNotFoundException("Marker not found for lat: " + lat + ", lng: " + lng + ", and user: " + user.getUserId()));
+        markerRepository.delete(marker);
     }
 }
