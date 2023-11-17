@@ -22,6 +22,7 @@ public class Marker {
      private double lat;
      private double lng;
      @JsonIgnore
-     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "markers", cascade = CascadeType.MERGE)
-     private Set<User> users = new HashSet<>();
+     @ManyToOne(fetch = FetchType.EAGER)
+     @JoinColumn(name = "user_id")
+     private User user;
 }

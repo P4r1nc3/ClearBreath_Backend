@@ -33,12 +33,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinTable(
-            name = "users_markers",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "marker_id")
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private Set<Marker> markers = new HashSet<>();
 
 
