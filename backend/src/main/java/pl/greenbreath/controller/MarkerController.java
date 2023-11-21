@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/markers")
-@CrossOrigin(origins = "http://localhost:63343")
 public class MarkerController {
     private MarkerService markerService;
 
