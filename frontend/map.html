@@ -5,19 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Breath - Map</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        span {
+            color: #2091d6;
+        }
+
         #map {
             width: 100%;
-            height: 600px;
-            margin: 0;
+            height: calc(100% - 56px)
         }
 
-        #markerInfoModal {
-            display: none;
+        #markerInfoPanel {
+            position: fixed;
+            top: 56px;
+            left: -400px;
+            width: 400px;
+            height: calc(100% - 56px);
+            background-color: white;
+            overflow-y: auto;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
         }
 
-         span {
-             color: #2091d6;
-         }
+        .marker-info-header {
+            padding: 10px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .marker-info-content {
+            padding: 20px;
+        }
+
+        .marker-info-footer {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -45,25 +80,18 @@
     <!-- map -->
     <div id="map"></div>
 
-    <!-- marker info modal -->
-    <div class="modal fade" id="markerInfoModal" tabindex="-1" role="dialog" aria-labelledby="markerInfoModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="markerInfoModalLabel">Marker Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="markerInfoContent">
-                    <!-- For future use -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="deleteMarkerBtn">Remove Marker</button>
-                </div>
-            </div>
+    <!-- marker info div -->
+    <div id="markerInfoPanel" class="marker-info-panel">
+        <div class="marker-info-header">
+            <h5>Marker Details</h5>
+            <button class="close-btn" onclick="closeMarkerInfoPanel()">×</button>
+        </div>
+        <div class="marker-info-content" id="markerInfoContent">
+            <div id="pollutionResponse"></div>
+        </div>
+        <div class="marker-info-footer">
+            <button class="btn btn-danger" id="deleteMarkerBtn" onclick="removeMarker()">Remove Marker</button>
+            <button class="btn btn-secondary" onclick="closeMarkerInfoPanel()">Close</button>
         </div>
     </div>
 
