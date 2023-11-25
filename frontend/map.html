@@ -176,9 +176,9 @@
                 clickedMarker = markerCoord;
 
                 $('#markerInfoContent').html(`
-            <p>Lat: ${markerCoord.lat}</p>
-            <p>Lng: ${markerCoord.lng}</p>
-        `);
+                    <p>Lat: ${markerCoord.lat}</p>
+                    <p>Lng: ${markerCoord.lng}</p>
+                `);
 
                 sendPollutionRequest(markerCoord.lat, markerCoord.lng);
 
@@ -186,8 +186,9 @@
                     chart.destroy();
                     chart = null;
                 }
-                
-                $('#deleteMarkerBtn').on('click', function () {
+
+
+                $('#deleteMarkerBtn').off('click').on('click', function () {
                     if (clickedMarker) {
                         var index = markers.findIndex(m => m.getLatLng().equals(clickedMarker));
 
@@ -195,7 +196,7 @@
                             map.removeLayer(markers[index]);
                             markers.splice(index, 1);
                             deletePointFromDatabase(clickedMarker.lat, clickedMarker.lng);
-                            $('#markerInfoModal').modal('hide');
+                            toggleMarkerInfoPanel();
                             clickedMarker = null;
                         } else {
                             console.warn("Marker not found in the markers array.");
@@ -204,6 +205,7 @@
                         console.warn("No marker clicked.");
                     }
                 });
+
                 if ($('#togglePanelBtn').hasClass('active')) {
                     openMarkerInfoPanel();
                 } else {
@@ -353,22 +355,23 @@
             var isOpen = panel.style.left === '0px';
 
             if (isOpen) {
-                closeMarkerInfoPanel();
-                button.style.left = '0';
-                button.classList.remove('active');
+                closeMarkerInfoPanel(button);
             } else {
-                openMarkerInfoPanel();
-                button.style.left = '400px';
-                button.classList.add('active');
+                openMarkerInfoPanel(button);
             }
         }
 
-        function openMarkerInfoPanel() {
+        function openMarkerInfoPanel(button) {
             document.getElementById('markerInfoPanel').style.left = '0';
+
+            button.style.left = '400px';
+            button.classList.add('active');
         }
 
-        function closeMarkerInfoPanel() {
+        function closeMarkerInfoPanel(button) {
             document.getElementById('markerInfoPanel').style.left = '-400px';
+            button.style.left = '0';
+            button.classList.remove('active');
         }
     </script>
 </body>
