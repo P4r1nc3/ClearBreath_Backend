@@ -120,10 +120,12 @@
             </button>
         </div>
         <div class="marker-info-content" id="markerInfoContent">
-            <div id="pollutionResponse"></div>
+            <div id="pm25ChartContainer"></div>
+            <div id="pm10ChartContainer"></div>
+            <div id="o3ChartContainer"></div>
         </div>
         <div class="marker-info-footer">
-            <button class="btn btn-danger" id="deleteMarkerBtn" onclick="removeMarker()">Remove Marker</button>
+            <button class="btn btn-danger" id="deleteMarkerBtn">Remove Marker</button>
         </div>
         <button class="btn btn-primary" id="togglePanelBtn" onclick="toggleMarkerInfoPanel()">
             <span><i id="arrowIcon" class="fas fa-caret-right"></i></span>
@@ -217,7 +219,7 @@
                         var pollutionData = JSON.parse(xhrPollution.responseText);
                         createPollutionChart(pollutionData);
 
-                        var responseElement = document.getElementById('pollutionResponse');
+                        var responseElement = document.getElementById('pm25ChartContaine');
                         responseElement.innerHTML = 'Response: ' + JSON.stringify(pollutionData);
                     } else {
                         console.error("Error sending pollution request. Status:", xhrPollution.status);
@@ -230,41 +232,36 @@
         }
 
         function createPollutionChart(pollutionData) {
+            createSubChart('pm25Chart', 'PM2.5 Pollution Data', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)', pollutionData.data.forecast.daily.pm25);
+            createSubChart('pm10Chart', 'PM10 Pollution Data', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)', pollutionData.data.forecast.daily.pm10);
+            createSubChart('o3Chart', 'O3 Pollution Data', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)', pollutionData.data.forecast.daily.o3);
+        }
+
+        function createSubChart(canvasId, label, backgroundColor, borderColor, data) {
             var ctx = document.createElement('canvas');
-            ctx.id = 'pollutionChart';
+            ctx.id = canvasId;
             document.getElementById('markerInfoContent').appendChild(ctx);
 
-            var forecastData = pollutionData.data.forecast.daily.pm25;
-
-            var labels = forecastData.map(day => day.day);
-            var values = forecastData.map(day => day.avg);
-
-            if (chart) {
-                chart.data.labels = labels;
-                chart.data.datasets[0].data = values;
-                chart.update();
-            } else {
-                chart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'PM2.5 Pollution Data',
-                            data: values,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+            var subChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(day => day.day),
+                    datasets: [{
+                        label: label,
+                        data: data.map(day => day.avg),
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
                         }
                     }
-                });
-            }
+                }
+            });
         }
 
         function loadMarkers() {
