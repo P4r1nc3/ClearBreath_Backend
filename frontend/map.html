@@ -60,6 +60,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -99,6 +100,7 @@
         var map = L.map('map').setView([20, 0], 3);
         var markers = [];
         var clickedMarker = null;
+        var chart;
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© GreenBreath'
@@ -109,7 +111,6 @@
             var lng = e.latlng.lng;
             addMarker(lat, lng);
             savePointToDatabase(lat, lng);
-            displayCoordinates(lat, lng);
         });
 
         function addMarker(lat, lng) {
@@ -120,8 +121,12 @@
                 var markerCoord = e.latlng;
                 clickedMarker = markerCoord;
 
-                $('#markerInfoContent').html(`Coordinates: ${markerCoord.lat}, ${markerCoord.lng}`);
-                $('#markerInfoModal').modal('show');
+                $('#markerInfoContent').html(`
+                    <p>Lat: ${markerCoord.lat}</p>
+                    <p>Lng: ${markerCoord.lng}</p>
+                `);
+                openMarkerInfoPanel();
+                sendPollutionRequest(markerCoord.lat, markerCoord.lng);
 
                 $('#deleteMarkerBtn').on('click', function () {
                     if (clickedMarker) {
@@ -141,6 +146,64 @@
                     }
                 });
             });
+        }
+
+        function sendPollutionRequest(lat, lng) {
+            var xhrPollution = new XMLHttpRequest();
+            xhrPollution.onreadystatechange = function () {
+                if (xhrPollution.readyState === 4) {
+                    if (xhrPollution.status === 200) {
+                        var pollutionData = JSON.parse(xhrPollution.responseText);
+                        createPollutionChart(pollutionData);
+
+                        var responseElement = document.getElementById('pollutionResponse');
+                        responseElement.innerHTML = 'Response: ' + JSON.stringify(pollutionData);
+                    } else {
+                        console.error("Error sending pollution request. Status:", xhrPollution.status);
+                    }
+                }
+            };
+            var urlPollution = "http://localhost:8080/pollution?lat=" + lat + "&lng=" + lng;
+            xhrPollution.open("GET", urlPollution, true);
+            xhrPollution.send();
+        }
+
+        function createPollutionChart(pollutionData) {
+            var ctx = document.createElement('canvas');
+            ctx.id = 'pollutionChart';
+            document.getElementById('markerInfoContent').appendChild(ctx);
+
+            var forecastData = pollutionData.data.forecast.daily.pm25;
+
+            var labels = forecastData.map(day => day.day);
+            var values = forecastData.map(day => day.avg);
+
+            if (chart) {
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = values;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'PM2.5 Pollution Data',
+                            data: values,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         function loadMarkers() {
@@ -227,6 +290,25 @@
                 }
             });
         });
+
+        function openMarkerInfoPanel() {
+            document.getElementById('markerInfoPanel').style.left = '0';
+
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+        }
+
+        function closeMarkerInfoPanel() {
+            document.getElementById('markerInfoPanel').style.left = '-400px';
+            clickedMarker = null;
+
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+        }
     </script>
 </body>
 </html>
