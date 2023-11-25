@@ -32,11 +32,10 @@ public class MarkerController {
     }
 
     @PostMapping
-    public String saveMarker(@RequestParam double lat, @RequestParam double lng) {
+    public Marker saveMarker(@RequestParam double lat, @RequestParam double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        markerService.saveMarker(lat, lng, user);
-        return "Point saved successfully!";
+        return markerService.saveMarker(lat, lng, user);
     }
 
     @DeleteMapping
