@@ -5,19 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Breath - Map</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        span {
+            color: #2091d6;
+        }
+
         #map {
             width: 100%;
-            height: 600px;
-            margin: 0;
+            height: calc(100% - 56px)
         }
 
-        #markerInfoModal {
-            display: none;
+        .close:focus {
+            outline: none;
         }
 
-         span {
-             color: #2091d6;
-         }
+        #togglePanelBtn {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 30px 10px;
+            cursor: pointer;
+            transition: left 0.3s ease-in-out;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #markerInfoPanel {
+            position: fixed;
+            top: 56px;
+            left: -400px;
+            width: 400px;
+            height: calc(100% - 56px);
+            background-color: white;
+            overflow-y: auto;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+            box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+            opacity: 95%;
+        }
+
+        .marker-info-header {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+
+        .marker-info-content {
+            padding: 20px;
+            padding-bottom: 60px;
+        }
+
+        .marker-info-footer {
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            position: fixed;
+            width: 400px;
+            bottom: 0;
+            background-color: white;
+            z-index: 1001;
+        }
+
+        #arrowIcon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        #togglePanelBtn.active #arrowIcon {
+            transform: rotate(180deg);
+        }
     </style>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -25,6 +93,8 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body>
@@ -45,35 +115,49 @@
     <!-- map -->
     <div id="map"></div>
 
-    <!-- marker info modal -->
-    <div class="modal fade" id="markerInfoModal" tabindex="-1" role="dialog" aria-labelledby="markerInfoModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="markerInfoModalLabel">Marker Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="markerInfoContent">
-                    <!-- For future use -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="deleteMarkerBtn">Remove Marker</button>
-                </div>
-            </div>
+    <!-- marker info div -->
+    <div id="markerInfoPanel" class="marker-info-panel">
+        <div class="marker-info-header">
+            <h5>Marker Details</h5>
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true" onclick="toggleMarkerInfoPanel()" >&times;</span>
+            </button>
         </div>
+        <div class="marker-info-content" id="markerInfoContent">
+        </div>
+        <div class="marker-info-footer">
+            <button class="btn btn-danger" id="deleteMarkerBtn">Remove Marker</button>
+        </div>
+        <button class="btn btn-primary" id="togglePanelBtn" onclick="toggleMarkerInfoPanel()">
+            <span><i id="arrowIcon" class="fas fa-caret-right"></i></span>
+        </button>
     </div>
 
     <script>
-        var map = L.map('map').setView([20, 0], 3);
+        var map = L.map('map', {
+            zoomControl: false,
+            minZoom: 3,
+        }).setView([20, 0], 3);
+
+        var southWest = L.latLng(-90, -Infinity);
+        var northEast = L.latLng(90, Infinity);
+        var bounds = L.latLngBounds(southWest, northEast);
+
+        map.setMaxBounds(bounds);
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
+
         var markers = [];
         var clickedMarker = null;
+        var chart;
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© GreenBreath'
+        }).addTo(map);
+
+        L.control.zoom({
+            position: 'bottomright'
         }).addTo(map);
 
         map.on('click', function (e) {
@@ -81,7 +165,6 @@
             var lng = e.latlng.lng;
             addMarker(lat, lng);
             savePointToDatabase(lat, lng);
-            displayCoordinates(lat, lng);
         });
 
         function addMarker(lat, lng) {
@@ -92,10 +175,20 @@
                 var markerCoord = e.latlng;
                 clickedMarker = markerCoord;
 
-                $('#markerInfoContent').html(`Coordinates: ${markerCoord.lat}, ${markerCoord.lng}`);
-                $('#markerInfoModal').modal('show');
+                $('#markerInfoContent').html(`
+                    <p>Lat: ${markerCoord.lat}</p>
+                    <p>Lng: ${markerCoord.lng}</p>
+                `);
 
-                $('#deleteMarkerBtn').on('click', function () {
+                sendPollutionRequest(markerCoord.lat, markerCoord.lng);
+
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+
+
+                $('#deleteMarkerBtn').off('click').on('click', function () {
                     if (clickedMarker) {
                         var index = markers.findIndex(m => m.getLatLng().equals(clickedMarker));
 
@@ -103,7 +196,7 @@
                             map.removeLayer(markers[index]);
                             markers.splice(index, 1);
                             deletePointFromDatabase(clickedMarker.lat, clickedMarker.lng);
-                            $('#markerInfoModal').modal('hide');
+                            toggleMarkerInfoPanel();
                             clickedMarker = null;
                         } else {
                             console.warn("Marker not found in the markers array.");
@@ -112,6 +205,62 @@
                         console.warn("No marker clicked.");
                     }
                 });
+
+                if ($('#togglePanelBtn').hasClass('active')) {
+                    openMarkerInfoPanel();
+                } else {
+                    toggleMarkerInfoPanel();
+                }
+            });
+        }
+
+        function sendPollutionRequest(lat, lng) {
+            var xhrPollution = new XMLHttpRequest();
+            xhrPollution.onreadystatechange = function () {
+                if (xhrPollution.readyState === 4) {
+                    if (xhrPollution.status === 200) {
+                        var pollutionData = JSON.parse(xhrPollution.responseText);
+                        createPollutionChart(pollutionData);
+                    } else {
+                        console.error("Error sending pollution request. Status:", xhrPollution.status);
+                    }
+                }
+            };
+            var urlPollution = "http://localhost:8080/pollution?lat=" + lat + "&lng=" + lng;
+            xhrPollution.open("GET", urlPollution, true);
+            xhrPollution.send();
+        }
+
+        function createPollutionChart(pollutionData) {
+            createSubChart('pm25Chart', 'PM 2.5 Pollution Data', 'rgba(75, 192, 192, 0.2)', 'rgba(75, 192, 192, 1)', pollutionData.data.forecast.daily.pm25);
+            createSubChart('pm10Chart', 'PM 10 Pollution Data', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 1)', pollutionData.data.forecast.daily.pm10);
+            createSubChart('o3Chart', 'O3 Pollution Data', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 1)', pollutionData.data.forecast.daily.o3);
+        }
+
+        function createSubChart(canvasId, label, backgroundColor, borderColor, data) {
+            var ctx = document.createElement('canvas');
+            ctx.id = canvasId;
+            document.getElementById('markerInfoContent').appendChild(ctx);
+
+            var subChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(day => day.day),
+                    datasets: [{
+                        label: label,
+                        data: data.map(day => day.avg),
+                        backgroundColor: backgroundColor,
+                        borderColor: borderColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
         }
 
@@ -199,6 +348,31 @@
                 }
             });
         });
+
+        function toggleMarkerInfoPanel() {
+            var panel = document.getElementById('markerInfoPanel');
+            var button = document.getElementById('togglePanelBtn');
+            var isOpen = panel.style.left === '0px';
+
+            if (isOpen) {
+                closeMarkerInfoPanel(button);
+            } else {
+                openMarkerInfoPanel(button);
+            }
+        }
+
+        function openMarkerInfoPanel(button) {
+            document.getElementById('markerInfoPanel').style.left = '0';
+
+            button.style.left = '400px';
+            button.classList.add('active');
+        }
+
+        function closeMarkerInfoPanel(button) {
+            document.getElementById('markerInfoPanel').style.left = '-400px';
+            button.style.left = '0';
+            button.classList.remove('active');
+        }
     </script>
 </body>
 </html>
