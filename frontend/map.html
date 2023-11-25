@@ -59,10 +59,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+
         }
 
         .marker-info-content {
             padding: 20px;
+            padding-bottom: 60px;
         }
 
         .marker-info-footer {
@@ -70,9 +72,11 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            position: absolute;
+            position: fixed;
+            width: 400px;
             bottom: 0;
-            width: 100%;
+            background-color: white;
+            z-index: 1001;
         }
 
         #arrowIcon {
