@@ -12,7 +12,7 @@ public interface MarkerService {
 
     Marker getMarker(double lat, double lng, User user);
 
-    void saveMarker(double lat, double lng, User user);
+    Marker saveMarker(double lat, double lng, User user);
 
     void deleteMarker(double lat, double lng, User user);
 }
