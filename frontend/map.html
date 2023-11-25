@@ -179,6 +179,11 @@
                 toggleMarkerInfoPanel();
                 sendPollutionRequest(markerCoord.lat, markerCoord.lng);
 
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                
                 $('#deleteMarkerBtn').on('click', function () {
                     if (clickedMarker) {
                         var index = markers.findIndex(m => m.getLatLng().equals(clickedMarker));
@@ -360,21 +365,10 @@
 
         function openMarkerInfoPanel() {
             document.getElementById('markerInfoPanel').style.left = '0';
-
-            if (chart) {
-                chart.destroy();
-                chart = null;
-            }
         }
 
         function closeMarkerInfoPanel() {
             document.getElementById('markerInfoPanel').style.left = '-400px';
-            clickedMarker = null;
-
-            if (chart) {
-                chart.destroy();
-                chart = null;
-            }
         }
     </script>
 </body>
