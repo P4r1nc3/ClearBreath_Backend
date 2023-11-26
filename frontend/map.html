@@ -55,11 +55,9 @@
         }
 
         .marker-info-header {
-            padding: 10px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-
+            justify-content: flex-end;
+            padding: 10px;
         }
 
         .marker-info-content {
@@ -117,8 +115,7 @@
 
     <!-- marker info div -->
     <div id="markerInfoPanel" class="marker-info-panel">
-        <div class="marker-info-header">
-            <h5>Marker Details</h5>
+        <div class="marker-info-header" >
             <button type="button" class="close" aria-label="Close">
                 <span aria-hidden="true" onclick="toggleMarkerInfoPanel()" >&times;</span>
             </button>
@@ -174,13 +171,7 @@
                 var markerCoord = e.latlng;
                 clickedMarker = markerCoord;
 
-                $('#markerInfoContent').html(`
-                    <p>Lat: ${markerCoord.lat}</p>
-                    <p>Lng: ${markerCoord.lng}</p>
-                    <p>Continent: ${continent}</p>
-                    <p>Country: ${countryName}</p>
-                    <p>City: ${city}</p>
-                `);
+                $('#markerInfoContent').html(`<h2>${continent}</h2><h5>${countryName}</h5><h6>${city}</h6>`);
 
                 sendPollutionRequest(markerCoord.lat, markerCoord.lng);
 
