@@ -55,11 +55,9 @@
         }
 
         .marker-info-header {
-            padding: 10px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-
+            justify-content: flex-end;
+            padding: 10px;
         }
 
         .marker-info-content {
@@ -117,8 +115,7 @@
 
     <!-- marker info div -->
     <div id="markerInfoPanel" class="marker-info-panel">
-        <div class="marker-info-header">
-            <h5>Marker Details</h5>
+        <div class="marker-info-header" >
             <button type="button" class="close" aria-label="Close">
                 <span aria-hidden="true" onclick="toggleMarkerInfoPanel()" >&times;</span>
             </button>
@@ -163,11 +160,10 @@
         map.on('click', function (e) {
             var lat = e.latlng.lat;
             var lng = e.latlng.lng;
-            addMarker(lat, lng);
             savePointToDatabase(lat, lng);
         });
 
-        function addMarker(lat, lng) {
+        function addMarker(lat, lng, continent, countryName, city) {
             var marker = L.marker([lat, lng]).addTo(map);
             markers.push(marker);
 
@@ -175,10 +171,7 @@
                 var markerCoord = e.latlng;
                 clickedMarker = markerCoord;
 
-                $('#markerInfoContent').html(`
-                    <p>Lat: ${markerCoord.lat}</p>
-                    <p>Lng: ${markerCoord.lng}</p>
-                `);
+                $('#markerInfoContent').html(`<h2>${continent}</h2><h5>${countryName}</h5><h6>${city}</h6>`);
 
                 sendPollutionRequest(markerCoord.lat, markerCoord.lng);
 
@@ -186,7 +179,6 @@
                     chart.destroy();
                     chart = null;
                 }
-
 
                 $('#deleteMarkerBtn').off('click').on('click', function () {
                     if (clickedMarker) {
@@ -214,6 +206,24 @@
             });
         }
 
+        function savePointToDatabase(lat, lng) {
+            var token = localStorage.getItem('token');
+            var xhrSavePoint = new XMLHttpRequest();
+            xhrSavePoint.onreadystatechange = function () {
+                if (xhrSavePoint.readyState == 4) {
+                    if (xhrSavePoint.status == 200) {
+                        var markerData = JSON.parse(xhrSavePoint.responseText);
+                        addMarker(lat, lng, markerData.continent, markerData.countryName, markerData.city);
+                    } else {
+                        console.error("Failed to save point to the database!");
+                    }
+                }
+            };
+            var urlSavePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
+            xhrSavePoint.open("POST", urlSavePoint, true);
+            xhrSavePoint.setRequestHeader('Authorization', 'Bearer ' + token);
+            xhrSavePoint.send();
+        }
         function sendPollutionRequest(lat, lng) {
             var xhrPollution = new XMLHttpRequest();
             xhrPollution.onreadystatechange = function () {
@@ -272,7 +282,7 @@
                     if (xhrLoadMarkers.status == 200) {
                         var markerData = JSON.parse(xhrLoadMarkers.responseText);
                         markerData.forEach(function (data) {
-                            addMarker(data.lat, data.lng);
+                            addMarker(data.lat, data.lng, data.continent, data.countryName, data.city);
                         });
                     } else {
                         console.error("Failed to load markers from the database!");
@@ -283,24 +293,6 @@
             xhrLoadMarkers.open("GET", urlLoadMarkers, true);
             xhrLoadMarkers.setRequestHeader('Authorization', 'Bearer ' + token)
             xhrLoadMarkers.send();
-        }
-
-        function savePointToDatabase(lat, lng) {
-            var token = localStorage.getItem('token');
-            var xhrSavePoint = new XMLHttpRequest();
-            xhrSavePoint.onreadystatechange = function () {
-                if (xhrSavePoint.readyState == 4) {
-                    if (xhrSavePoint.status == 200) {
-                        console.log("Point saved to the database successfully!");
-                    } else {
-                        console.error("Failed to save point to the database!");
-                    }
-                }
-            };
-            var urlSavePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
-            xhrSavePoint.open("POST", urlSavePoint, true);
-            xhrSavePoint.setRequestHeader('Authorization', 'Bearer ' + token);
-            xhrSavePoint.send();
         }
 
         function deletePointFromDatabase(lat, lng) {
@@ -327,6 +319,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             var loggedIn = localStorage.getItem('token') ? true : false;
+
             function updateNavButtons() {
                 var navButtons = document.getElementById("navButtons");
                 if (loggedIn) {
@@ -337,7 +330,9 @@
                         '<li class="nav-item"><a class="nav-link" href="signUp.html">SignUp</a></li>';
                 }
             }
+
             updateNavButtons();
+
             document.getElementById('navButtons').addEventListener('click', function (event) {
                 if (event.target.id === 'logoutBtn') {
                     localStorage.removeItem('token');

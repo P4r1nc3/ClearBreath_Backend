@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Setter
 @Getter
 @ToString
@@ -21,6 +18,9 @@ public class Marker {
      private Long markerId;
      private double lat;
      private double lng;
+     private String continent;
+     private String countryName;
+     private String city;
      @JsonIgnore
      @ManyToOne(fetch = FetchType.EAGER)
      @JoinColumn(name = "user_id")
