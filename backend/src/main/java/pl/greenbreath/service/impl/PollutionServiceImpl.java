@@ -17,6 +17,7 @@ public class PollutionServiceImpl implements PollutionService {
     @Override
     public AirQualityResponse getPollution(double lat, double lng) {
         String apiUrl = Constants.API_URL + "/feed/geo:" + lat + ";" + lng + "/?token=" + apiToken;
+        log.info("Calling: {}", apiUrl);
         return new RestTemplate().getForObject(apiUrl, AirQualityResponse.class);
     }
 }
