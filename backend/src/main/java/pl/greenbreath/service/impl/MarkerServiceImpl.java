@@ -3,6 +3,7 @@ package pl.greenbreath.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.greenbreath.Constants;
@@ -22,7 +23,10 @@ import java.util.List;
 @AllArgsConstructor
 public class MarkerServiceImpl implements MarkerService {
     private final MarkerRepository markerRepository;
+
+    @Qualifier("cached-pollution-service")
     private final PollutionService pollutionService;
+
     private final CalculationService calculationService;
 
     public List<Marker> getAllMarkers(User user) {
