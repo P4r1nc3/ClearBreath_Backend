@@ -15,11 +15,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CachedPollutionServiceImpl implements PollutionService {
 
-    private final PollutionServiceImpl delegate;
+    private final PollutionService delegate;
     private final Cache<String, AirQualityResponse> cache;
 
-    public CachedPollutionServiceImpl(PollutionServiceImpl delegate,
-                                      MeterRegistry meterRegistry) {
+    public CachedPollutionServiceImpl(PollutionService delegate, MeterRegistry meterRegistry) {
         this.delegate = delegate;
         this.cache = Caffeine.newBuilder()
                 .recordStats()
@@ -28,7 +27,6 @@ public class CachedPollutionServiceImpl implements PollutionService {
                 .build();
         CaffeineCacheMetrics.monitor(meterRegistry, this.cache, "pollution-response-caching");
     }
-
     @Override
     public AirQualityResponse getPollution(double lat, double lng) {
         String key = lat + "," + lng;
