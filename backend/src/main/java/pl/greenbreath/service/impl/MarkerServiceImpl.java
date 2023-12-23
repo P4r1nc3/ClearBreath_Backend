@@ -6,11 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.greenbreath.Constants;
+import pl.greenbreath.dao.response.AirQualityResponse;
 import pl.greenbreath.dao.response.MarkerInfoResponse;
 import pl.greenbreath.model.Marker;
 import pl.greenbreath.model.User;
 import pl.greenbreath.repository.MarkerRepository;
+import pl.greenbreath.service.CalculationService;
 import pl.greenbreath.service.MarkerService;
+import pl.greenbreath.service.PollutionService;
 
 import java.util.List;
 
@@ -18,7 +21,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class MarkerServiceImpl implements MarkerService {
-    private MarkerRepository markerRepository;
+    private final MarkerRepository markerRepository;
+    private final PollutionService pollutionService;
+    private final CalculationService calculationService;
 
     public List<Marker> getAllMarkers(User user) {
         return markerRepository.findByUser(user);
@@ -30,14 +35,23 @@ public class MarkerServiceImpl implements MarkerService {
     }
 
     public Marker saveMarker(double lat, double lng, User user) {
-        MarkerInfoResponse markerinfo = getMarkerData(lat, lng);
+        MarkerInfoResponse markerInfo = getMarkerData(lat, lng);
+
+        AirQualityResponse airQualityResponse = pollutionService.getPollution(lat, lng);
+        double latStation = airQualityResponse.getData().getCity().getGeo().get(0);
+        double lngStation = airQualityResponse.getData().getCity().getGeo().get(1);
+        double distance = calculationService.haversine(lat, lng, latStation, lngStation);
+
         Marker marker = Marker.builder()
                 .lat(lat)
                 .lng(lng)
+                .latStation(latStation)
+                .lngStation(lngStation)
+                .distance(distance)
                 .user(user)
-                .continent(markerinfo.getContinent())
-                .countryName(markerinfo.getCountryName())
-                .city(markerinfo.getCity())
+                .continent(markerInfo.getContinent())
+                .countryName(markerInfo.getCountryName())
+                .city(markerInfo.getCity())
                 .build();
         markerRepository.save(marker);
         return marker;

@@ -14,10 +14,14 @@ import lombok.*;
 @Table(name = "markers")
 public class Marker {
      @Id
+     @JsonIgnore
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long markerId;
      private double lat;
      private double lng;
+     private double latStation;
+     private double lngStation;
+     private double distance;
      private String continent;
      private String countryName;
      private String city;
