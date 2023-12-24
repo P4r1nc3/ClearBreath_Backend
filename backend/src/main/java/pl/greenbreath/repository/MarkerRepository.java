@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface MarkerRepository extends JpaRepository<Marker, Long> {
     List<Marker> findByUser(User user);
     Optional<Marker> findByLatAndLngAndUser(double lat, double lng, User user);
+    void deleteByUser(User user);
 }
