@@ -32,8 +32,10 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private LocalDateTime createdAt;
+    @JsonIgnore
     private String password;
     @Enumerated(EnumType.STRING)
+    @JsonIgnore
     private Role role;
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
