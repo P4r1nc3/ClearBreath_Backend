@@ -27,19 +27,11 @@ public class CachedPollutionServiceImpl implements PollutionService {
                 .build();
         CaffeineCacheMetrics.monitor(meterRegistry, this.cache, "pollution-response-caching");
     }
+
     @Override
     public AirQualityResponse getPollution(double lat, double lng) {
         String key = lat + "," + lng;
-        AirQualityResponse cachedResponse = cache.getIfPresent(key);
-
-        if (cachedResponse != null) {
-            return cachedResponse;
-        }
-
-        AirQualityResponse response = delegate.getPollution(lat, lng);
-        cache.put(key, response);
-
-        return response;
+        return cache.get(key, pollutionKey -> delegate.getPollution(lat, lng));
     }
 }
 
