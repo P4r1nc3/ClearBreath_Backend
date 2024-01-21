@@ -26,18 +26,10 @@ public class CachedWeatherServiceImpl implements WeatherService {
                 .build();
         CaffeineCacheMetrics.monitor(meterRegistry, this.cache, "pollution-response-caching");
     }
+
     @Override
     public WeatherForecastResponse getWeatherForecast(double lat, double lng) {
         String key = lat + "," + lng;
-        WeatherForecastResponse cachedResponse = cache.getIfPresent(key);
-
-        if (cachedResponse != null) {
-            return cachedResponse;
-        }
-
-        WeatherForecastResponse response = delegate.getWeatherForecast(lat, lng);
-        cache.put(key, response);
-
-        return response;
+        return cache.get(key, weatherForecastKey -> delegate.getWeatherForecast(lat, lng));
     }
 }
