@@ -10,7 +10,7 @@ import pl.greenbreath.service.PollutionService;
 
 @Slf4j
 @Service
-public class PollutionServiceImpl implements PollutionService {
+final class PollutionServiceImpl implements PollutionService {
     @Value("${token.waqi.api}")
     private String apiWaqiToken;
 

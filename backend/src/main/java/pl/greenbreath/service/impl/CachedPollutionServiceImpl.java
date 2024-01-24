@@ -13,8 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class CachedPollutionServiceImpl implements PollutionService {
-
+final class CachedPollutionServiceImpl implements PollutionService {
     private final PollutionService delegate;
     private final Cache<String, AirQualityResponse> cache;
 
