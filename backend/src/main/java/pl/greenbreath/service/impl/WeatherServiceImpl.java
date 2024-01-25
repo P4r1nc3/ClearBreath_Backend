@@ -10,7 +10,7 @@ import pl.greenbreath.service.WeatherService;
 
 @Slf4j
 @Service
-public class WeatherServiceImpl implements WeatherService {
+final class WeatherServiceImpl implements WeatherService {
     @Value("${token.tomorrow.api}")
     private String apiTomorrowToken;
 
