@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class CachedWeatherServiceImpl implements WeatherService {
+final class CachedWeatherServiceImpl implements WeatherService {
     private final WeatherService delegate;
     private final Cache<String, WeatherForecastResponse> cache;
 
