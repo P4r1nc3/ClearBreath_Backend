@@ -10,13 +10,13 @@ import pl.greenbreath.service.PollutionService;
 
 @Slf4j
 @Service
-public class PollutionServiceImpl implements PollutionService {
-    @Value("${token.api}")
-    private String apiToken;
+final class PollutionServiceImpl implements PollutionService {
+    @Value("${token.waqi.api}")
+    private String apiWaqiToken;
 
     @Override
     public AirQualityResponse getPollution(double lat, double lng) {
-        String apiUrl = Constants.API_URL + "/feed/geo:" + lat + ";" + lng + "/?token=" + apiToken;
+        String apiUrl = Constants.WAQI_API_URL + "/feed/geo:" + lat + ";" + lng + "/?token=" + apiWaqiToken;
         log.info("Calling: {}", apiUrl);
         return new RestTemplate().getForObject(apiUrl, AirQualityResponse.class);
     }

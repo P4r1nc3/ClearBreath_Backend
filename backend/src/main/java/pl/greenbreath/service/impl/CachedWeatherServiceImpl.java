@@ -6,18 +6,18 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.greenbreath.dao.response.AirQualityResponse;
-import pl.greenbreath.service.PollutionService;
+import pl.greenbreath.dao.response.WeatherForecastResponse;
+import pl.greenbreath.service.WeatherService;
 
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-final class CachedPollutionServiceImpl implements PollutionService {
-    private final PollutionService delegate;
-    private final Cache<String, AirQualityResponse> cache;
+final class CachedWeatherServiceImpl implements WeatherService {
+    private final WeatherService delegate;
+    private final Cache<String, WeatherForecastResponse> cache;
 
-    public CachedPollutionServiceImpl(PollutionService delegate, MeterRegistry meterRegistry) {
+    public CachedWeatherServiceImpl(WeatherService delegate, MeterRegistry meterRegistry) {
         this.delegate = delegate;
         this.cache = Caffeine.newBuilder()
                 .recordStats()
@@ -28,10 +28,8 @@ final class CachedPollutionServiceImpl implements PollutionService {
     }
 
     @Override
-    public AirQualityResponse getPollution(double lat, double lng) {
+    public WeatherForecastResponse getWeatherForecast(double lat, double lng) {
         String key = lat + "," + lng;
-        return cache.get(key, pollutionKey -> delegate.getPollution(lat, lng));
+        return cache.get(key, weatherForecastKey -> delegate.getWeatherForecast(lat, lng));
     }
 }
-
-
