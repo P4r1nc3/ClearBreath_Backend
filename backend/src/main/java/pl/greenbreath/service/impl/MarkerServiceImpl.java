@@ -69,6 +69,7 @@ public class MarkerServiceImpl implements MarkerService {
 
     private MarkerInfoResponse getMarkerData(double lat, double lng) {
         String apiUrl = Constants.BIG_DATA_CLOUD_API_URL + "/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + lng + "&localityLanguage=en";
+        log.info("Calling: {}", apiUrl);
         return new RestTemplate().getForObject(apiUrl, MarkerInfoResponse.class);
     }
 }
