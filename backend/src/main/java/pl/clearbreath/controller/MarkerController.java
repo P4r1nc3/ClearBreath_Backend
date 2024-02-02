@@ -18,8 +18,7 @@ import pl.clearbreath.service.WeatherService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
 
 @RestController
@@ -43,28 +42,30 @@ public class MarkerController {
 
     @GetMapping("/data")
     public ResponseEntity<Map<String, Object>> getMarkerData(@RequestParam double lat, @RequestParam double lng) {
-        CompletableFuture<AirQualityResponse> airQualityFuture = CompletableFuture.supplyAsync(() -> {
-            return pollutionService.getPollution(lat, lng);
-        });
-
-        CompletableFuture<WeatherForecastResponse> weatherForecastFuture = CompletableFuture.supplyAsync(() -> {
-            return weatherService.getWeatherForecast(lat, lng);
-        });
-
-        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(airQualityFuture, weatherForecastFuture);
-
-        Map<String, Object> response = new HashMap<>();
-        try {
-            combinedFuture.get();
-            response.put("airQuality", airQualityFuture.get());
-            response.put("weatherForecast", weatherForecastFuture.get());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
+        Map<String, Object> response = fetchMarkerData(lat, lng);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    private Map<String, Object> fetchMarkerData(double lat, double lng) {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        Future<AirQualityResponse> airQualityFuture = executorService.submit(() -> pollutionService.getPollution(lat, lng));
+        Future<WeatherForecastResponse> weatherForecastFuture = executorService.submit(() -> weatherService.getWeatherForecast(lat, lng));
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            response.put("airQuality", airQualityFuture.get());
+            response.put("weatherForecast", weatherForecastFuture.get());
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            // 500 Internal Server Error
+        } finally {
+            executorService.shutdown();
+        }
+
+        return response;
+    }
 
     @GetMapping("/all")
     public List<Marker> getAllMarkers() {
