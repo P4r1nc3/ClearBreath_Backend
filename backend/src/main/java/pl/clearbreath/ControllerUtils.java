@@ -19,15 +19,22 @@ public final class ControllerUtils {
     // Utility class
     private ControllerUtils() {}
 
-    public static ResponseEntity<Object> createErrorResponse(HttpStatus status, String path, String cause, String action) {
+    public static ResponseEntity<Object> createErrorResponse(HttpStatus status, String cause, String action, HttpServletRequest request) {
         String timestamp = Instant.now().toString();
 
-        ErrorResponse response = new ErrorResponse(status.value(), status.getReasonPhrase(), path, timestamp, cause, action);
+        ErrorResponse response = new ErrorResponse(
+                status.value(),
+                status.getReasonPhrase(),
+                requestUri(request),
+                timestamp,
+                cause,
+                action
+        );
 
         return new ResponseEntity<>(response, status);
     }
 
-    public static String requestUri(HttpServletRequest request) {
+    private static String requestUri(HttpServletRequest request) {
         StringBuilder fullPath = new StringBuilder(request.getRequestURI());
 
         String queryString = request.getQueryString();
