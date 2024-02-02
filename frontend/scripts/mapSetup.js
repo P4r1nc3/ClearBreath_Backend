@@ -17,7 +17,7 @@ var clickedMarker = null;
 var chart;
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© GreenBreath'
+    attribution: '© ClearBreath'
 }).addTo(map);
 
 L.control.zoom({
