@@ -1,0 +1,35 @@
+package pl.clearbreath.service.impl;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import pl.clearbreath.dao.response.WeatherForecastResponse;
+import pl.clearbreath.service.WeatherService;
+
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
+@Service
+final class CachedWeatherServiceImpl implements WeatherService {
+    private final WeatherService delegate;
+    private final Cache<String, WeatherForecastResponse> cache;
+
+    public CachedWeatherServiceImpl(WeatherService delegate, MeterRegistry meterRegistry) {
+        this.delegate = delegate;
+        this.cache = Caffeine.newBuilder()
+                .recordStats()
+                .expireAfterWrite(30, TimeUnit.MINUTES)
+                .maximumSize(1000)
+                .build();
+        CaffeineCacheMetrics.monitor(meterRegistry, this.cache, "pollution-response-caching");
+    }
+
+    @Override
+    public WeatherForecastResponse getWeatherForecast(double lat, double lng) {
+        String key = lat + "," + lng;
+        return cache.get(key, weatherForecastKey -> delegate.getWeatherForecast(lat, lng));
+    }
+}
