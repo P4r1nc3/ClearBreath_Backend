@@ -1,4 +1,4 @@
-package pl.greenbreath.dao.response;
+package pl.clearbreath.dao.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Value;
