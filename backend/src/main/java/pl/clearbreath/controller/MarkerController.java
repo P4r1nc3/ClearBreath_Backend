@@ -81,10 +81,11 @@ public class MarkerController {
     }
 
     @DeleteMapping
-    public String deleteMarker(@RequestParam double lat, @RequestParam double lng) {
+    public ResponseEntity<Void> deleteMarker(@RequestParam double lat, @RequestParam double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteMarker(lat, lng, user);
-        return "Point deleted successfully!";
+
+        return ResponseEntity.noContent().build();
     }
 }
