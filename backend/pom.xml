@@ -8,10 +8,10 @@
 		<version>3.1.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>pl.greenbreath</groupId>
-	<artifactId>greenbreath</artifactId>
+	<groupId>pl.clearbreath</groupId>
+	<artifactId>clearbreath</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>greenbreath</name>
+	<name>clearbreath</name>
 	<description>Air quality monitor</description>
 	<properties>
 		<java.version>17</java.version>
