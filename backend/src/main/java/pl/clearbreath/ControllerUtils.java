@@ -8,13 +8,15 @@ import pl.clearbreath.dao.response.ErrorResponse;
 import java.time.Instant;
 
 public final class ControllerUtils {
-    // 403 Forbidden
-    public static final String FORBIDDEN_CAUSE = "You do not have permission to access this resource.";
-    public static final String FORBIDDEN_ACTION = "Check if your account has the necessary permissions.";
+    // 401 Unauthorized
+    public static final String UNAUTHORIZED_CAUSE = "Authentication is required to access this resource.";
+    public static final String UNAUTHORIZED_ACTION = "Please provide valid authentication credentials.";
 
     // 404 Not Found
     public static final String NOT_FOUND_CAUSE = "The requested resource was not found.";
     public static final String NOT_FOUND_ACTION = "Verify the request path and try again.";
+
+    private static final String ERROR_REQUEST_URI_ATTR = "jakarta.servlet.error.request_uri";
 
     // Utility class
     private ControllerUtils() {}
@@ -35,7 +37,12 @@ public final class ControllerUtils {
     }
 
     private static String requestUri(HttpServletRequest request) {
-        StringBuilder fullPath = new StringBuilder(request.getRequestURI());
+        String originalPath = (String) request.getAttribute(ERROR_REQUEST_URI_ATTR);
+        if (originalPath == null) {
+            originalPath = request.getRequestURI();
+        }
+
+        StringBuilder fullPath = new StringBuilder(originalPath);
 
         String queryString = request.getQueryString();
         if (queryString != null && !queryString.isEmpty()) {
