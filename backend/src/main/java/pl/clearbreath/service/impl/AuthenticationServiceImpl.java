@@ -1,5 +1,7 @@
 package pl.clearbreath.service.impl;
 
+import pl.clearbreath.exception.InvalidLoginDetailsException;
+import pl.clearbreath.exception.UserAlreadyExistsException;
 import pl.clearbreath.model.Role;
 import pl.clearbreath.model.User;
 import pl.clearbreath.dao.request.SignUpRequest;
@@ -24,8 +26,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("Such user already exists.");
+        }
+
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -35,16 +42,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
+
         var jwt = jwtService.generateToken(user);
+
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 
     @Override
     public JwtAuthenticationResponse signin(SignInRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (Exception e) {
+            throw new InvalidLoginDetailsException("Invalid login details provided.");
+        }
+
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+                .orElseThrow(() -> new InvalidLoginDetailsException("Invalid login details provided."));
+
         var jwt = jwtService.generateToken(user);
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
