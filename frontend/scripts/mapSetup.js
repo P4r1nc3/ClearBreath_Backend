@@ -90,7 +90,7 @@ function savePointToDatabase(lat, lng) {
             }
         }
     };
-    var urlSavePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
+    var urlSavePoint = "http://localhost:8080/markers/lat/" + lat + "/lng/" + lng;
     xhrSavePoint.open("POST", urlSavePoint, true);
     xhrSavePoint.setRequestHeader('Authorization', 'Bearer ' + token);
     xhrSavePoint.send();
@@ -111,7 +111,7 @@ function loadMarkers() {
             }
         }
     };
-    var urlLoadMarkers = "http://localhost:8080/markers/all";
+    var urlLoadMarkers = "http://localhost:8080/markers";
     xhrLoadMarkers.open("GET", urlLoadMarkers, true);
     xhrLoadMarkers.setRequestHeader('Authorization', 'Bearer ' + token)
     xhrLoadMarkers.send();
@@ -129,7 +129,7 @@ function deletePointFromDatabase(lat, lng) {
             }
         }
     };
-    var urlDeletePoint = "http://localhost:8080/markers?lat=" + lat + "&lng=" + lng;
+    var urlDeletePoint = "http://localhost:8080/markers/lat/" + lat + "/lng/" + lng;
     xhrDeletePoint.open("DELETE", urlDeletePoint, true);
     xhrDeletePoint.setRequestHeader('Authorization', 'Bearer ' + token);
     xhrDeletePoint.send();
