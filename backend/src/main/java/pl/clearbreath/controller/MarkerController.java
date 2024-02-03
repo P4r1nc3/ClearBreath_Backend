@@ -1,5 +1,6 @@
 package pl.clearbreath.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -7,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import pl.clearbreath.ControllerUtils;
 import pl.clearbreath.dao.response.AirQualityResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
+import pl.clearbreath.exception.MarkerNotFoundException;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.User;
 import pl.clearbreath.service.MarkerService;
@@ -33,15 +36,15 @@ public class MarkerController {
     @Qualifier("cached-weather-service")
     private final WeatherService weatherService;
 
-    @GetMapping
-    public Marker getMarker(@RequestParam double lat, @RequestParam double lng) {
+    @GetMapping("/lat/{lat}/lng/{lng}")
+    public Marker getMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return markerService.getMarker(lat, lng, user);
     }
 
-    @GetMapping("/data")
-    public ResponseEntity<Map<String, Object>> getMarkerData(@RequestParam double lat, @RequestParam double lng) {
+    @GetMapping("/lat/{lat}/lng{lng}/data")
+    public ResponseEntity<Map<String, Object>> getMarkerData(@PathVariable double lat, @PathVariable double lng) {
         Map<String, Object> response = fetchMarkerData(lat, lng);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -67,22 +70,22 @@ public class MarkerController {
         return response;
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public List<Marker> getAllMarkers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return markerService.getAllMarkers(user);
     }
 
-    @PostMapping
-    public Marker saveMarker(@RequestParam double lat, @RequestParam double lng) {
+    @PostMapping("/lat/{lat}/lng/{lng}")
+    public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         return markerService.saveMarker(lat, lng, user);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteMarker(@RequestParam double lat, @RequestParam double lng) {
+    @DeleteMapping("/lat/{lat}/lng/{lng}")
+    public ResponseEntity<Void> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteMarker(lat, lng, user);
