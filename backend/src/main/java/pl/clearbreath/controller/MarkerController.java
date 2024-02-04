@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.clearbreath.ControllerUtils;
 import pl.clearbreath.dao.response.AirQualityResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
+import pl.clearbreath.exception.MarkerAlreadyExistException;
 import pl.clearbreath.exception.MarkerNotFoundException;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.User;
@@ -36,6 +37,13 @@ public class MarkerController {
     @Qualifier("cached-weather-service")
     private final WeatherService weatherService;
 
+    @PostMapping("/lat/{lat}/lng/{lng}")
+    public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return markerService.saveMarker(lat, lng, user);
+    }
+
     @GetMapping("/lat/{lat}/lng/{lng}")
     public Marker getMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,6 +55,29 @@ public class MarkerController {
     public ResponseEntity<Map<String, Object>> getMarkerData(@PathVariable double lat, @PathVariable double lng) {
         Map<String, Object> response = fetchMarkerData(lat, lng);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public List<Marker> getAllMarkers() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        return markerService.getAllMarkers(user);
+    }
+
+    @DeleteMapping("/lat/{lat}/lng/{lng}")
+    public ResponseEntity<Void> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        markerService.deleteMarker(lat, lng, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllMarkers() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        markerService.deleteAllMarkers(user);
+        return ResponseEntity.noContent().build();
     }
 
     private Map<String, Object> fetchMarkerData(double lat, double lng) {
