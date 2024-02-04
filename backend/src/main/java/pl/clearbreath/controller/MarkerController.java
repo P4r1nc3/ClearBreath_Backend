@@ -70,26 +70,23 @@ public class MarkerController {
         return response;
     }
 
-    @GetMapping
-    public List<Marker> getAllMarkers() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return markerService.getAllMarkers(user);
+    @ExceptionHandler(MarkerNotFoundException.class)
+    public ResponseEntity<Object> handleMarkerNotFoundException(MarkerNotFoundException ex, HttpServletRequest request) {
+        return ControllerUtils.createErrorResponse(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                ControllerUtils.NOT_FOUND_ACTION,
+                request
+        );
     }
 
-    @PostMapping("/lat/{lat}/lng/{lng}")
-    public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return markerService.saveMarker(lat, lng, user);
-    }
-
-    @DeleteMapping("/lat/{lat}/lng/{lng}")
-    public ResponseEntity<Void> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        markerService.deleteMarker(lat, lng, user);
-
-        return ResponseEntity.noContent().build();
+    @ExceptionHandler(MarkerAlreadyExistException.class)
+    public ResponseEntity<Object> handleMarkerAlreadyExist(MarkerAlreadyExistException ex, HttpServletRequest request) {
+        return ControllerUtils.createErrorResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                "Try using a different latitude or longitude.",
+                request
+        );
     }
 }
