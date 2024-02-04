@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import pl.clearbreath.Constants;
 import pl.clearbreath.dao.response.AirQualityResponse;
@@ -18,6 +19,7 @@ import pl.clearbreath.service.MarkerService;
 import pl.clearbreath.service.PollutionService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -32,6 +34,11 @@ public class MarkerServiceImpl implements MarkerService {
 
     public List<Marker> getAllMarkers(User user) {
         return markerRepository.findByUser(user);
+    }
+
+    @Transactional
+    public void deleteAllMarkers(User user) {
+        markerRepository.deleteByUser(user);
     }
 
     public Marker getMarker(double lat, double lng, User user) {
