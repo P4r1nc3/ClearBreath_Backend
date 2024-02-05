@@ -8,6 +8,9 @@ import pl.clearbreath.dao.response.ErrorResponse;
 import java.time.Instant;
 
 public final class ControllerUtils {
+    // 400 Bad Request
+    public static final String BAD_REQUEST_ACTION = "Please review and update your password accordingly.";
+
     // 401 Unauthorized
     public static final String UNAUTHORIZED_CAUSE = "Authentication is required to access this resource.";
     public static final String UNAUTHORIZED_ACTION = "Please provide valid authentication credentials.";
