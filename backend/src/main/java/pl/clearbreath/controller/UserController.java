@@ -1,17 +1,17 @@
 package pl.clearbreath.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import pl.clearbreath.ControllerUtils;
+import pl.clearbreath.exception.InvalidPasswordException;
+import pl.clearbreath.exception.SamePasswordException;
+import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.service.UserService;
 import pl.clearbreath.dao.request.ChangePasswordRequest;
@@ -22,7 +22,6 @@ import pl.clearbreath.dao.request.ChangePasswordRequest;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     public User getUserData() {
@@ -35,46 +34,35 @@ public class UserController {
     public ResponseEntity<?> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
-        }
-
-        try {
-            userService.deleteUser(user);
-            return ResponseEntity.ok("User deleted successfully.");
-        } catch (Exception e) {
-            log.error("Error deleting user: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body("An error occurred while deleting the user.");
-        }
+        userService.deleteUser(user);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
+        userService.changePassword(user, changePasswordRequest);
+        return ResponseEntity.noContent().build();
+    }
 
-        if (user == null) {
-            return ResponseEntity.badRequest().body("User not found.");
-        }
+    @ExceptionHandler({InvalidPasswordException.class, SamePasswordException.class})
+    public ResponseEntity<Object> handlePasswordChangeExceptions(RuntimeException ex, HttpServletRequest request) {
+        return ControllerUtils.createErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                ControllerUtils.BAD_REQUEST_ACTION,
+                request
+        );
+    }
 
-        String oldPassword = changePasswordRequest.getOldPassword();
-        String newPassword = changePasswordRequest.getNewPassword();
-
-        if (oldPassword.equals(newPassword)) {
-            return ResponseEntity.badRequest().body("New password must be different from the old password.");
-        }
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            return ResponseEntity.badRequest().body("Invalid old password.");
-        }
-
-        try {
-            userService.changePassword(user, oldPassword, newPassword);
-            return ResponseEntity.ok("Password changed successfully.");
-        } catch (Exception e) {
-            log.error("Error changing password: {}", e.getMessage());
-            return ResponseEntity.internalServerError().body("An error occurred while changing the password.");
-        }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(UserNotFoundException ex, HttpServletRequest request) {
+        return ControllerUtils.createErrorResponse(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                ControllerUtils.NOT_FOUND_ACTION,
+                request
+        );
     }
 }
