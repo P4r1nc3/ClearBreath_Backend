@@ -2,6 +2,10 @@ package pl.clearbreath.config;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import pl.clearbreath.ControllerUtils;
 import pl.clearbreath.service.JwtService;
 import pl.clearbreath.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -31,14 +35,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
-        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+        String jwt = null;
+        String userEmail = null;
+        if (!StringUtils.isEmpty(authHeader) && StringUtils.startsWith(authHeader, "Bearer ")) {
+            jwt = authHeader.substring(7);
+            try {
+                userEmail = jwtService.extractUserName(jwt);
+            } catch (io.jsonwebtoken.ExpiredJwtException e) {
+                ResponseEntity<Object> errorResponseEntity = ControllerUtils.createErrorResponse(
+                        HttpStatus.UNAUTHORIZED,
+                        ControllerUtils.UNAUTHORIZED_CAUSE_EXPIRY,
+                        ControllerUtils.UNAUTHORIZED_ACTION_EXPIRY,
+                        request
+                );
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String errorResponseJson = objectMapper.writeValueAsString(errorResponseEntity.getBody());
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write(errorResponseJson);
+                return;
+            }
         }
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUserName(jwt);
+
         if (StringUtils.isNotEmpty(userEmail)
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService()
