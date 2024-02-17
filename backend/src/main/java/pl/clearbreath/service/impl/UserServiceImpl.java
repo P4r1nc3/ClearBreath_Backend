@@ -1,6 +1,10 @@
 package pl.clearbreath.service.impl;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.clearbreath.dao.request.ChangePasswordRequest;
+import pl.clearbreath.exception.InvalidPasswordException;
+import pl.clearbreath.exception.SamePasswordException;
+import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.UserRepository;
 import pl.clearbreath.repository.MarkerRepository;
@@ -25,9 +29,9 @@ public class UserServiceImpl implements UserService {
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             @Override
-            public UserDetails loadUserByUsername(String username) {
-                return userRepository.findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            public UserDetails loadUserByUsername(String email) {
+                return userRepository.findByEmail(email)
+                        .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
             }
         };
     }
@@ -35,13 +39,30 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deleteUser(User user) {
+        userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User with email " + user.getEmail() + " not found"));
         markerRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 
     @Override
-    public void changePassword(User user, String oldPassword, String newPassword) {
+    public void changePassword(User user, ChangePasswordRequest changePasswordRequest) {
         PasswordEncoder passwordEncoder = applicationContext.getBean(PasswordEncoder.class);
+
+        String oldPassword = changePasswordRequest.getOldPassword();
+        String newPassword = changePasswordRequest.getNewPassword();
+
+        if (oldPassword.equals(newPassword)) {
+            throw new SamePasswordException("New password must be different from the old password.");
+        }
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new InvalidPasswordException("Invalid old password.");
+        }
+
+        userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User with email " + user.getEmail() + " not found"));
+
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

@@ -10,7 +10,7 @@ function sendPollutionRequest(lat, lng) {
             }
         }
     };
-    var urlPollution = "http://localhost:8080/pollution?lat=" + lat + "&lng=" + lng;
+    var urlPollution = "http://localhost:8080/pollution/lat/" + lat + "/lng/" + lng;
     xhrPollution.open("GET", urlPollution, true);
     xhrPollution.send();
 }

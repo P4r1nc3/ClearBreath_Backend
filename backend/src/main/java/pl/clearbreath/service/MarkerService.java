@@ -10,6 +10,8 @@ public interface MarkerService {
 
     List<Marker> getAllMarkers(User user);
 
+    void deleteAllMarkers(User user);
+
     Marker getMarker(double lat, double lng, User user);
 
     Marker saveMarker(double lat, double lng, User user);
