@@ -2,10 +2,7 @@ package pl.clearbreath.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
 import pl.clearbreath.service.WeatherService;
 
@@ -16,8 +13,8 @@ public class WeatherController {
     @Qualifier("cached-weather-service")
     private final WeatherService weatherService;
 
-    @GetMapping
-    public WeatherForecastResponse getMarkerForecast(@RequestParam double lat, @RequestParam double lng) {
+    @GetMapping("/lat/{lat}/lng/{lng}")
+    public WeatherForecastResponse getMarkerForecast(@PathVariable double lat, @PathVariable double lng) {
         return weatherService.getWeatherForecast(lat, lng);
     }
 }
