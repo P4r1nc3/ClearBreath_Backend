@@ -16,7 +16,7 @@ Ensure the following are installed on your system:
 
 For API documentation and interactive testing, visit the Swagger UI:
 
-[ClearBreath Swagger UI](https://p4r1nc3.github.io/ClearBreath/)
+[ClearBreath Swagger UI](https://p4r1nc3.github.io/ClearBreath_Backend/)
 
 ## Setup Instructions
 
