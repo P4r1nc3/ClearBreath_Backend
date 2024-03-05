@@ -1,0 +1,860 @@
+openapi: 3.0.0
+info:
+  title: ClearBreath API
+  version: 1.0.0
+  description: |
+      The ClearBreath API provides real-time access to air quality and weather forecast data, enabling users to monitor environmental conditions in their area. It offers endpoints for user authentication, marker management, and data retrieval, making it ideal for developers building health and environmental awareness applications. With comprehensive coverage and precise data, the ClearBreath API is your go-to solution for integrating environmental data into your applications.
+
+servers:
+  - url: http://localhost:8080
+    description: DEV server
+  - url: https://clearbreath.onrender.com
+    description: PRD server
+
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: User
+    description: User profile management endpoints
+  - name: Markers
+    description: Marker management and data retrieval endpoints
+  - name: Pollution Data
+    description: Pollution data retrieval endpoints
+  - name: Weather Data
+    description: Weather forecast data retrieval endpoints
+  - name: Environmental Data
+    description: Combined air quality and weather forecast data retrieval endpoints
+    
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user
+      description: This endpoint is responsible for registering new users in the system. It requires a JSON body with the user's first name, last name, email, and password. Upon successful registration, it returns a JWT token for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+            example:
+              firstName: Konrad
+              lastName: Tupta
+              email: konrad.tupta@gmail.com
+              password: Password12345
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+              example:
+                token: eyJhb9.eyJzdWIiOiJkc0.yyDdclU2sZGvVLdy
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                path: /auth/signup
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: Validation error. Invalid email format
+                action: Please correct the invalid fields and resubmit the request.
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                path: /auth/signup
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: Such user already exists.
+                action: Try using a different email.
+                    
+  /auth/signin:
+    post:
+      tags:
+        - Auth
+      summary: Authenticate a user
+      description: This endpoint authenticates users against the provided credentials (email and password) in the request body. If the credentials are valid, it responds with a JWT token that can be used for authenticated requests to other endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+            example:
+              email: konrad.tupta@gmail.com
+              password: password123
+      responses:
+        '200':
+          description: User signed in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtAuthenticationResponse'
+              example:
+                token: eyJhb9.eyJzdWIiOiJkc0.yyDdclU2sZGvVLdy
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                path: /auth/signin
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: Validation error. Password cannot be empty
+                action: Please correct the invalid fields and resubmit the request.
+        '401':
+          description: Invalid login details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /auth/signin
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Invalid login details provided.
+                action: Check your login credentials and try again.
+                
+  /users:
+    get:
+      tags:
+        - User
+      summary: Retrieve user
+      description: Retrieves the profile information of the currently authenticated user, including name, email, and account creation data.
+      responses:
+        '200':
+          description: Successfully retrieved user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                firstName: Konrad
+                lastName: Tupta
+                email: konrad.tupta@gmail.com
+                createdAt: 2024-02-04T20:22:30.51088
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /users
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not found
+                path: /users
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: User with email konrad.tupta@gmail.com not found
+                action: Verify the request path and try again.
+  
+    delete:
+      tags:
+        - User
+      summary: Delete user
+      description: Permanently deletes the authenticated user's account, requiring careful consideration as this action is irreversible.
+      responses:
+        '204':
+          description: User deleted successfully
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /users
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not found
+                path: /users
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: User with email konrad.tupta@gmail.com not found
+                action: Verify the request path and try again.
+          
+  /users/change-password:
+    put:
+      tags:
+        - User
+      summary: Change user password
+      description: Allows an authenticated user to change their password by submitting their old password along with the new one. The request must meet the password policy enforced by the service.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+            example:
+              oldPassword: Password12345
+              newPassword: Password123456
+      responses:
+        '204':
+          description: Password changed successfully
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 400
+                error: Bad Request
+                path: /users/change-password
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: Validation error. Password cannot be empty
+                action: Please correct the invalid fields and resubmit the request.
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /users/change-password
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not found
+                path: /users/change-password
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause: User with email konrad.tupta@gmail.com not found
+                action: Verify the request path and try again.
+          
+  /markers/lat/{markerLat}/lng/{markerLng}:
+    post:
+      tags:
+        - Markers
+      summary: Save a new marker
+      description: Saves a new geographical marker for the authenticated user at the specified latitude and longitude. This endpoint can be used to mark specific locations for air quality or weather data retrieval.
+      parameters:
+        - in: path
+          name: markerLat
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Latitude of the marker
+        - in: path
+          name: markerLng
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Longitude of the marker
+      responses:
+        '200':
+          description: Marker saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marker'
+              examples:
+                example1:
+                  value:
+                    lat: 10.0
+                    lng: 11.0
+                    latStation: 9.0416479110718
+                    lngStation: 7.4773740768433
+                    distance: 400.7250715038908
+                    continent: Africa
+                    countryName: Nigeria
+                    city: Akko
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '409':
+          description: Marker already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 409
+                error: Conflict
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:39:43.651626Z
+                cause:  Marker found for lat 10.0, lng 117.0.
+                action: Try using a different latitude or longitude.
+                
+    get:
+      tags:
+        - Markers
+      summary: Retrieve a specific marker by latitude and longitude
+      description: Retrieves the details of a specific marker identified by latitude and longitude for the authenticated user, including related environmental data.
+      parameters:
+        - in: path
+          name: markerLat
+          required: true
+          schema:
+            type: number
+            format: double
+        - in: path
+          name: markerLng
+          required: true
+          schema:
+            type: number
+            format: double
+      responses:
+        '200':
+          description: Marker retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marker'
+              examples:
+                example1:
+                  value:
+                    lat: 10.0
+                    lng: 11.0
+                    latStation: 9.0416479110718
+                    lngStation: 7.4773740768433
+                    distance: 400.7250715038908
+                    continent: Africa
+                    countryName: Nigeria
+                    city: Akko
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '404':
+          description: Marker not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example1:
+                  value:
+                    status: 404
+                    error: Not Found
+                    path: /markers/lat/10/lng/117
+                    timestamp: 2024-02-03T16:01:47.036077Z
+                    cause: Marker not found for lat 10.0, lng 117.0.
+                    action: Verify the request path and try again.
+                    
+    delete:
+      tags:
+        - Markers
+      summary: Delete marker for the authenticated user
+      description: Deletes a specific marker identified by latitude and longitude for the authenticated user, removing it from their list of saved locations.
+      parameters:
+        - in: path
+          name: markerLat
+          required: true
+          schema:
+            type: number
+            format: double
+        - in: path
+          name: markerLng
+          required: true
+          schema:
+            type: number
+            format: double
+      responses:
+        '204':
+          description: Marker deleted successfully
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+        '404':
+          description: Marker not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 404
+                error: Not Found
+                path: /markers?lat=10&lng=117
+                timestamp: 2024-02-03T16:01:47.036077Z
+                cause: Marker not found for lat 10.0, lng 117.0.
+                action: Verify the request path and try again.
+                    
+  /markers:
+    get:
+      tags:
+        - Markers
+      summary: Retrieve all markers for the authenticated user
+      description: Retrieves all geographical markers saved by the authenticated user, providing a comprehensive list of their marked locations for easy access to environmental data.
+      responses:
+        '200':
+          description: List of markers retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Marker'
+              example:
+                - lat: 10.0
+                  lng: 11.0
+                  latStation: 9.0416479110718
+                  lngStation: 7.4773740768433
+                  distance: 400.7250715038908
+                  continent: Africa
+                  countryName: Nigeria
+                  city: Akko
+                - lat: 12.0
+                  lng: 14.0
+                  latStation: 12.0416479110718
+                  lngStation: 14.4773740768433
+                  distance: 300.7250715038908
+                  continent: Asia
+                  countryName: India
+                  city: Delhi
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+                  
+    delete:
+      tags:
+        - Markers
+      summary: Delete all markers for the authenticated user
+      description: Removes all geographical markers saved by the authenticated user from the system, effectively clearing their saved locations.
+      responses:
+        '204':
+          description: Markers deleted successfully
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 401
+                error: Unauthorized
+                path: /markers/lat/11.0/lng/117.0
+                timestamp: 2024-02-03T15:40:19.518757Z
+                cause: Authentication is required to access this resource.
+                action: Please provide valid authentication credentials.
+
+  /pollution/lat/{latitude}/lng/{longitude}:
+    get:
+      tags:
+        - Pollution Data
+      summary: Fetch air quality data for a given location
+      description: Fetches the latest air quality data for the specified location identified by latitude and longitude. The data includes various pollution indicators, providing a snapshot of the air quality conditions.
+      parameters:
+        - in: path
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Latitude of the location
+        - in: path
+          name: longitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Longitude of the location
+      responses:
+        '200':
+          description: Air quality data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirQualityResponse'
+                
+  /weather/lat/{latitude}/lng/{longitude}:
+    get:
+      tags:
+        - Weather Data
+      summary: Fetch weather forecast data for a given location
+      description: Provides the current weather forecast for a given location based on its latitude and longitude. The forecast includes temperature, humidity, precipitation, and other relevant weather information.
+      parameters:
+        - in: path
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Latitude of the location
+        - in: path
+          name: longitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Longitude of the location
+      responses:
+        '200':
+          description: Weather forecast data retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherForecastResponse'
+                
+  /environmental/lat/{latitude}/lng/{longitude}:
+    get:
+      tags:
+        - Environmental Data
+      summary: Fetch marker-specific data including air quality and weather forecast
+      description: Combines and fetches both air quality data and weather forecast for a specified location based on latitude and longitude. This endpoint is ideal for users looking to get a comprehensive environmental overview of a specific area.
+      parameters:
+        - in: path
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Latitude of the location
+        - in: path
+          name: longitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Longitude of the location
+      responses:
+        '200':
+          description: Location environmental data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  airQuality:
+                    $ref: '#/components/schemas/AirQualityResponse'
+                  weatherForecast:
+                    $ref: '#/components/schemas/WeatherForecastResponse'
+
+components:
+  schemas:
+    Marker:
+      type: object
+      required:
+        - lat
+        - lng
+        - latStation
+        - lngStation
+        - distance
+        - continent
+        - countryName
+        - city
+      properties:
+        lat:
+          type: number
+          format: double
+          description: Latitude of the marker.
+        lng:
+          type: number
+          format: double
+          description: Longitude of the marker.
+        latStation:
+          type: number
+          format: double
+          description: Latitude of the nearest station.
+        lngStation:
+          type: number
+          format: double
+          description: Longitude of the nearest station.
+        distance:
+          type: number
+          format: double
+          description: Distance to the nearest station in kilometers.
+        continent:
+          type: string
+          description: Continent where the marker is located.
+        countryName:
+          type: string
+          description: Country where the marker is located.
+        city:
+          type: string
+          description: City where the marker is located.
+    
+    User:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - createdAt
+      properties:
+        firstName:
+          type: string
+          description: The user's first name.
+        lastName:
+          type: string
+          description: The user's last name.
+        email:
+          type: string
+          format: email
+          description: The user's email address, which must follow the standard email format.
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the user's account was created, in ISO 8601 format.
+        
+    SignUpRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+          description: The first name of the user attempting to sign up.
+        lastName:
+          type: string
+          description: The last name of the user attempting to sign up.
+        email:
+          type: string
+          format: email
+          description: The email address of the user attempting to sign up. Must be a valid email format.
+        password:
+          type: string
+          format: password
+          description: The password chosen by the user for account creation. Should meet the application's password strength requirements.
+    
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: The user's email address used for signing in.
+        password:
+          type: string
+          format: password
+          description: The user's password for account access. This should be the same password used at sign-up.
+    ChangePasswordRequest:
+      type: object
+      required:
+        - oldPassword
+        - newPassword
+      properties:
+        oldPassword:
+          type: string
+          description: The current password of the user. This field cannot be empty.
+          minLength: 8
+        newPassword:
+          type: string
+          description: The new password for the user. Must meet the application's password complexity requirements.
+          minLength: 8
+          
+    JwtAuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: The JSON Web Token (JWT) generated upon successful authentication. This token should be used for authorization in subsequent requests by including it in the request headers.
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+          description: The HTTP status code of the response, indicating the nature of the error.
+        error:
+          type: string
+          description: A brief title or description of the error that occurred.
+        path:
+          type: string
+          description: The request path where the error was encountered.
+        timestamp:
+          type: string
+          format: date-time
+          description: The timestamp when the error occurred, in ISO 8601 format.
+        cause:
+          type: string
+          description: A more detailed explanation of why the error occurred.
+        action:
+          type: string
+          description: Suggested action(s) to resolve the error or to avoid it in future requests.
+          
+
+    AirQualityResponse:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          description: Status code, can be ok or error.
+        data:
+          type: object
+          required:
+            - idx
+            - aqi
+            - time
+            - city
+            - iaqi
+            - forecast
+          properties:
+            idx:
+              type: integer
+              description: Unique ID for the city monitoring station.
+            aqi:
+              type: integer
+              description: Real-time air quality information.
+            time:
+              type: object
+              required:
+                - s
+                - tz
+              properties:
+                s:
+                  type: string
+                  description: Local measurement time.
+                tz:
+                  type: string
+                  description: Station timezone.
+            city:
+              type: object
+              required:
+                - name
+                - geo
+                - url
+              properties:
+                name:
+                  type: string
+                  description: Name of the monitoring station.
+                geo:
+                  type: array
+                  items:
+                    type: string
+                  description: Latitude/Longitude of the monitoring station.
+                url:
+                  type: string
+                  description: Webpage associated to the monitoring station.
+            iaqi:
+              type: object
+              properties:
+                pm25:
+                  type: object
+                  required:
+                    - v
+                  properties:
+                    v:
+                      type: integer
+                      description: Individual AQI for the PM2.5.
+            forecast:
+              type: object
+              properties:
+                daily:
+                  type: object
+                  properties:
+                    pm25:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                          - avg
+                          - day
+                          - max
+                          - min
+                        properties:
+                          avg:
+                            type: integer
+                            description: Average PM2.5 for the day.
+                          day:
+                            type: string
+                            description: Day of the forecast.
+                          max:
+                            type: integer
+                            description: Maximum PM2.5 for the day.
+                          min:
+                            type: integer
+                            description: Minimum PM2.5 for the day.
+
+      
+    WeatherForecastResponse:
+      type: object
+      # Define properties for WeatherForecastResponse
+ 
