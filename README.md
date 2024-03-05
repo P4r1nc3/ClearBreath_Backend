@@ -12,6 +12,12 @@ Ensure the following are installed on your system:
 - **Maven** 3.6.3 or later
 - **MySQL Database** (MySQL 8 recommended)
 
+## Swagger Documentation
+
+For API documentation and interactive testing, visit the Swagger UI:
+
+[ClearBreath Swagger UI](https://p4r1nc3.github.io/ClearBreath/)
+
 ## Setup Instructions
 
 ### Step 1: Clone the Repository
@@ -30,12 +36,14 @@ cd ClearBreath
 
 ### Step 2: Configure Environment Variables
 
-FlashDash requires the configuration of certain environment variables related to database connectivity and JWT authentication. These are defined in the `application.properties` file and must be set prior to running the application:
+ClearBreath requires the configuration of certain environment variables related to database connectivity and JWT authentication. These are defined in the `application.properties` file and must be set prior to running the application:
 
 - `DB_HOST`: Database URL (e.g., `jdbc:mysql://localhost:3306/clear-breath`)
 - `DB_USERNAME`: Database username
 - `DB_PASSWORD`: Database password
 - `JWT_KEY`: Secret key for JWT token signing
+- `WAQI_API_KEY`: Your World Air Quality Index project API key
+- `TOMOTTOW_API_KEY`: Your Tomorrow.io API key for weather forecast data
 
 ### Step 3: Configuring Environment Variables in IntelliJ IDEA
 
@@ -64,7 +72,7 @@ DB_HOST=jdbc:mysql://localhost:3306/clear-breath;DB_USERNAME=root;DB_PASSWORD=ad
 
 ### Step 4: Building the Application
 
-To build the FlashDash application, use the following Maven command:
+To build the ClearBreath application, use the following Maven command:
 
 ```bash
 mvn clean install
@@ -80,7 +88,7 @@ After successfully building the project, run it with Maven by executing:
 mvn spring-boot:run
 ```
 
-This starts the FlashDash service, making it accessible at `http://localhost:8080`.
+This starts the ClearBreath service, making it accessible at `http://localhost:8080`.
 
 ## Conclusion
 
