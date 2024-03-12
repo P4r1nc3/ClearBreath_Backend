@@ -12,7 +12,7 @@ import pl.clearbreath.dao.request.SignInRequest;
 import pl.clearbreath.dao.response.JwtAuthenticationResponse;
 import pl.clearbreath.exception.InvalidLoginDetailsException;
 import pl.clearbreath.exception.UserAlreadyExistsException;
-import pl.clearbreath.service.AuthenticationService;
+import pl.clearbreath.security.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
 

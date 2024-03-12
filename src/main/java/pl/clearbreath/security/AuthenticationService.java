@@ -1,4 +1,4 @@
-package pl.clearbreath.service;
+package pl.clearbreath.security;
 
 import pl.clearbreath.dao.request.SignUpRequest;
 import pl.clearbreath.dao.request.SignInRequest;

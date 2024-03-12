@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.security;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.clearbreath.dao.request.ChangePasswordRequest;
@@ -8,11 +8,9 @@ import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.UserRepository;
 import pl.clearbreath.repository.MarkerRepository;
-import pl.clearbreath.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 

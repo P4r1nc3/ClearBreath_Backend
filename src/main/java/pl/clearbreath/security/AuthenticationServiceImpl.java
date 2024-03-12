@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.security;
 
 import pl.clearbreath.exception.InvalidLoginDetailsException;
 import pl.clearbreath.exception.UserAlreadyExistsException;
@@ -8,8 +8,6 @@ import pl.clearbreath.dao.request.SignUpRequest;
 import pl.clearbreath.dao.request.SignInRequest;
 import pl.clearbreath.dao.response.JwtAuthenticationResponse;
 import pl.clearbreath.repository.UserRepository;
-import pl.clearbreath.service.AuthenticationService;
-import pl.clearbreath.service.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
