@@ -2,7 +2,7 @@ package pl.clearbreath.config;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import pl.clearbreath.service.UserService;
+import pl.clearbreath.security.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

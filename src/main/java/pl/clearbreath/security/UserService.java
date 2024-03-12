@@ -1,4 +1,4 @@
-package pl.clearbreath.service;
+package pl.clearbreath.security;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.clearbreath.dao.request.ChangePasswordRequest;
