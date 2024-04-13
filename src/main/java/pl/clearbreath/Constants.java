@@ -10,4 +10,5 @@ public class Constants {
     // https://docs.tomorrow.io/reference/welcome
     public static final String TOMORROW_IO_API_URL = "https://api.tomorrow.io/v4";
 
+    public static final String OPEN_API_URL = "https://p4r1nc3.github.io/ClearBreath_Backend/swagger.yaml";
 }
