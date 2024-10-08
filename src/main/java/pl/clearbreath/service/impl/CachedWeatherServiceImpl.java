@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.cache.CaffeineCacheMetrics;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
 import pl.clearbreath.service.WeatherService;
@@ -17,12 +18,18 @@ final class CachedWeatherServiceImpl implements WeatherService {
     private final WeatherService delegate;
     private final Cache<String, WeatherForecastResponse> cache;
 
+    @Value("${pollution.cache.expire-after-write-minutes}")
+    private long expireAfterWriteMinutes;
+    @Value("${pollution.cache.max-size}")
+    private long maxSize;
+
+
     public CachedWeatherServiceImpl(WeatherService delegate, MeterRegistry meterRegistry) {
         this.delegate = delegate;
         this.cache = Caffeine.newBuilder()
                 .recordStats()
-                .expireAfterWrite(30, TimeUnit.MINUTES)
-                .maximumSize(1000)
+                .expireAfterWrite(expireAfterWriteMinutes, TimeUnit.MINUTES)
+                .maximumSize(maxSize)
                 .build();
         CaffeineCacheMetrics.monitor(meterRegistry, this.cache, "pollution-response-caching");
     }
