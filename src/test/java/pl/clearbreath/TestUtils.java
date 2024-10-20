@@ -2,9 +2,8 @@ package pl.clearbreath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Autowired;
 import pl.clearbreath.dao.response.AirQualityResponse;
-import pl.clearbreath.dao.response.AirQualityResponse.*;
+import pl.clearbreath.dao.response.WeatherForecastResponse;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.Role;
 import pl.clearbreath.model.User;
@@ -13,7 +12,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 
 public class TestUtils {
 
@@ -54,6 +52,11 @@ public class TestUtils {
     @SneakyThrows
     public static AirQualityResponse createAirQualityResponse() {
         return readObjectFromJsonFile("/AirQualityResponse.json", AirQualityResponse.class);
+    }
+
+    @SneakyThrows
+    public static WeatherForecastResponse createWeatherForecastResponse() {
+        return readObjectFromJsonFile("/WeatherForecastResponse.json", WeatherForecastResponse.class);
     }
 
     private static <T> T readObjectFromJsonFile(String filePath, Class<T> clazz) throws IOException {
