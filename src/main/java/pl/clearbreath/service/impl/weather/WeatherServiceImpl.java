@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.service.impl.weather;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

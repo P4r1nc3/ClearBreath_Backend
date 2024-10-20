@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.service.impl.weather;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;

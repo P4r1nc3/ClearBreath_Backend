@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.service.impl.weather;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
