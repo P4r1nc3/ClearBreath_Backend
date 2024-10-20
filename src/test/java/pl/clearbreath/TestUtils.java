@@ -2,7 +2,10 @@ package pl.clearbreath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import pl.clearbreath.dao.request.SignInRequest;
+import pl.clearbreath.dao.request.SignUpRequest;
 import pl.clearbreath.dao.response.AirQualityResponse;
+import pl.clearbreath.dao.response.JwtAuthenticationResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.Role;
@@ -47,6 +50,18 @@ public class TestUtils {
                 .build();
 
         return user;
+    }
+
+    public static SignUpRequest createSignUpRequest() {
+        return new SignUpRequest("John", "Doe", "john@example.com", "password123");
+    }
+
+    public static SignInRequest createSignInRequest() {
+        return new SignInRequest("john@example.com", "password123");
+    }
+
+    public static JwtAuthenticationResponse createJwtAuthenticationResponse() {
+        return new JwtAuthenticationResponse("jwt_token");
     }
 
     @SneakyThrows
