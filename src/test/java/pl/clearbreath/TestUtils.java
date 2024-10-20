@@ -1,0 +1,64 @@
+package pl.clearbreath;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.clearbreath.dao.response.AirQualityResponse;
+import pl.clearbreath.dao.response.AirQualityResponse.*;
+import pl.clearbreath.model.Marker;
+import pl.clearbreath.model.Role;
+import pl.clearbreath.model.User;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+
+public class TestUtils {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static Marker createMarker() {
+        Marker marker = Marker.builder()
+                .markerId(1L)
+                .lat(52.2297)
+                .lng(21.0122)
+                .latStation(52.2297)
+                .lngStation(21.0122)
+                .distance(5.0)
+                .continent("Europe")
+                .countryName("Poland")
+                .city("Warsaw")
+                .user(createUser())
+                .build();
+
+        return marker;
+    }
+
+    public static User createUser() {
+        User user = User.builder()
+                .userId(1)
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .createdAt(LocalDateTime.now())
+                .password("hashedPassword")
+                .role(Role.USER)
+                .markers(new HashSet<>())
+                .build();
+
+        return user;
+    }
+
+    @SneakyThrows
+    public static AirQualityResponse createAirQualityResponse() {
+        return readObjectFromJsonFile("/AirQualityResponse.json", AirQualityResponse.class);
+    }
+
+    private static <T> T readObjectFromJsonFile(String filePath, Class<T> clazz) throws IOException {
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(TestUtils.class.getResourceAsStream(filePath))) {
+            return objectMapper.readValue(bufferedInputStream, clazz);
+        }
+    }
+}
