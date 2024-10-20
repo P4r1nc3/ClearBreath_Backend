@@ -2,6 +2,7 @@ package pl.clearbreath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import pl.clearbreath.dao.request.ChangePasswordRequest;
 import pl.clearbreath.dao.request.SignInRequest;
 import pl.clearbreath.dao.request.SignUpRequest;
 import pl.clearbreath.dao.response.AirQualityResponse;
@@ -50,6 +51,10 @@ public class TestUtils {
                 .build();
 
         return user;
+    }
+
+    public static ChangePasswordRequest createChangePasswordRequest() {
+        return new ChangePasswordRequest("oldPassword123", "newPassword123");
     }
 
     public static SignUpRequest createSignUpRequest() {
