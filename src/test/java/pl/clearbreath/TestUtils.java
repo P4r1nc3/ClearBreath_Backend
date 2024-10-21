@@ -7,6 +7,7 @@ import pl.clearbreath.dao.request.SignInRequest;
 import pl.clearbreath.dao.request.SignUpRequest;
 import pl.clearbreath.dao.response.AirQualityResponse;
 import pl.clearbreath.dao.response.JwtAuthenticationResponse;
+import pl.clearbreath.dao.response.MarkerInfoResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.Role;
@@ -77,6 +78,11 @@ public class TestUtils {
     @SneakyThrows
     public static WeatherForecastResponse createWeatherForecastResponse() {
         return readObjectFromJsonFile("/WeatherForecastResponse.json", WeatherForecastResponse.class);
+    }
+
+    @SneakyThrows
+    public static MarkerInfoResponse createMarkerInfoResponse() {
+        return readObjectFromJsonFile("/MarkerInfoResponse.json", MarkerInfoResponse.class);
     }
 
     private static <T> T readObjectFromJsonFile(String filePath, Class<T> clazz) throws IOException {
