@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl;
+package pl.clearbreath.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import pl.clearbreath.exception.InvalidLoginDetailsException;
 import pl.clearbreath.exception.UserAlreadyExistsException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.UserRepository;
-import pl.clearbreath.service.JwtService;
+import pl.clearbreath.service.impl.AuthenticationServiceImpl;
 
 import java.util.Optional;
 
