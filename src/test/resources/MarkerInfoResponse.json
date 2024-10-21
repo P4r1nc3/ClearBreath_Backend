@@ -1,0 +1,81 @@
+{
+  "latitude": 10.0,
+  "lookupSource": "coordinates",
+  "longitude": 20.0,
+  "localityLanguageRequested": "en",
+  "continent": "Africa",
+  "continentCode": "AF",
+  "countryName": "Chad",
+  "countryCode": "TD",
+  "principalSubdivision": "Salamat Region",
+  "principalSubdivisionCode": "TD-SA",
+  "city": "Am Timan",
+  "locality": "Am Timan",
+  "postcode": "",
+  "plusCode": "7G222222+22",
+  "localityInfo": {
+    "administrative": [
+      {
+        "name": "Chad",
+        "description": "sovereign state in central Africa",
+        "isoName": "Chad",
+        "order": 5,
+        "adminLevel": 2,
+        "isoCode": "TD",
+        "wikidataId": "Q657",
+        "geonameId": 2434508
+      },
+      {
+        "name": "Salamat Region",
+        "description": "region of Chad",
+        "isoName": "Salamat Region",
+        "order": 6,
+        "adminLevel": 4,
+        "isoCode": "TD-SA",
+        "wikidataId": "Q385584",
+        "geonameId": 242048
+      }
+    ],
+    "informative": [
+      {
+        "name": "Africa",
+        "description": "continent",
+        "isoName": "Africa",
+        "order": 1,
+        "isoCode": "AF",
+        "wikidataId": "Q15",
+        "geonameId": 6255146
+      },
+      {
+        "name": "Sahara",
+        "description": "desert on the African continent",
+        "order": 2,
+        "wikidataId": "Q6583",
+        "geonameId": 2212709
+      },
+      {
+        "name": "Sahel",
+        "description": "ecoclimatic and biogeographic transition zone in Africa",
+        "order": 3,
+        "wikidataId": "Q66065",
+        "geonameId": 2425938
+      },
+      {
+        "name": "Africa/Ndjamena",
+        "description": "time zone",
+        "order": 4
+      },
+      {
+        "name": "Domaine de chasse de Aouk",
+        "order": 7
+      },
+      {
+        "name": "Am Timan",
+        "description": "city",
+        "order": 8,
+        "wikidataId": "Q451529",
+        "geonameId": 245338
+      }
+    ]
+  }
+}

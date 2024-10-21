@@ -71,6 +71,7 @@ public class AirQualityResponse {
         private List<ParameterData> o3;
         private List<ParameterData> pm10;
         private List<ParameterData> pm25;
+        private List<ParameterData> uvi;
     }
 
     @Data
