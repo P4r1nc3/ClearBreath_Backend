@@ -48,6 +48,7 @@ public class MarkerInfoResponse {
         private int order;
         private String isoCode;
         private String wikidataId;
+        private int geonameId;
     }
 }
 
