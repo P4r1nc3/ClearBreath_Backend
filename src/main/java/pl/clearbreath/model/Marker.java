@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Setter
 @Getter
 @ToString
@@ -17,6 +19,7 @@ public class Marker {
      @JsonIgnore
      @GeneratedValue(strategy = GenerationType.IDENTITY)
      private Long markerId;
+     private LocalDateTime createdAt;
      private double lat;
      private double lng;
      private double latStation;
