@@ -18,6 +18,7 @@ import pl.clearbreath.service.CalculationService;
 import pl.clearbreath.service.MarkerService;
 import pl.clearbreath.service.PollutionService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,7 @@ public class MarkerServiceImpl implements MarkerService {
         double distance = calculationService.haversine(lat, lng, latStation, lngStation);
 
         Marker marker = Marker.builder()
+                .createdAt(LocalDateTime.now())
                 .lat(lat)
                 .lng(lng)
                 .latStation(latStation)
