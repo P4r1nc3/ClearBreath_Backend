@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 import pl.clearbreath.TestUtils;
-import pl.clearbreath.service.impl.JwtServiceImpl;
 
 
 import java.util.Collections;
@@ -15,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JwtServiceImplTest {
 
-    private JwtServiceImpl jwtService;
+    private JwtService jwtService;
     private UserDetails userDetails;
     private String mockToken;
 
     @BeforeEach
     public void setUp() {
-        jwtService = new JwtServiceImpl();
+        jwtService = new JwtService();
         String secretKey = "mysecretkeyformyappjwtshouldbeatleast32characters";
         ReflectionTestUtils.setField(jwtService, "jwtSigningKey", secretKey);
         userDetails = TestUtils.createUser();

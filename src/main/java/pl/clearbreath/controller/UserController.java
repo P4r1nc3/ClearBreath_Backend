@@ -13,8 +13,8 @@ import pl.clearbreath.exception.InvalidPasswordException;
 import pl.clearbreath.exception.SamePasswordException;
 import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
-import pl.clearbreath.service.UserService;
 import pl.clearbreath.dao.request.ChangePasswordRequest;
+import pl.clearbreath.service.UserService;
 
 @Slf4j
 @RestController

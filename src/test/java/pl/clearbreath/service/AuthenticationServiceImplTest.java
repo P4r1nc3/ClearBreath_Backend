@@ -16,7 +16,6 @@ import pl.clearbreath.exception.InvalidLoginDetailsException;
 import pl.clearbreath.exception.UserAlreadyExistsException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.UserRepository;
-import pl.clearbreath.service.impl.AuthenticationServiceImpl;
 
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public class AuthenticationServiceImplTest {
     private AuthenticationManager authenticationManager;
 
     @InjectMocks
-    private AuthenticationServiceImpl authenticationService;
+    private AuthenticationService authenticationService;
 
     private SignUpRequest signUpRequest;
     private SignInRequest signInRequest;
