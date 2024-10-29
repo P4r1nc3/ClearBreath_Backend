@@ -15,17 +15,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    public AuthenticationServiceImpl(UserRepository userRepository,
+                                     PasswordEncoder passwordEncoder,
+                                     JwtService jwtService,
+                                     AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
 
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) {
