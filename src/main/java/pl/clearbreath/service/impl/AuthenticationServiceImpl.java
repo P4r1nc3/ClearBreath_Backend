@@ -33,7 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new UserAlreadyExistsException("Such user already exists.");
         }
 
-        var user = User.builder()
+        User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .createdAt(LocalDateTime.now())
@@ -43,24 +43,30 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         userRepository.save(user);
 
-        var jwt = jwtService.generateToken(user);
+        String jwt = jwtService.generateToken(user);
 
-        return JwtAuthenticationResponse.builder().token(jwt).build();
+        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        jwtAuthenticationResponse.setToken(jwt);
+
+        return jwtAuthenticationResponse;
     }
 
     @Override
     public JwtAuthenticationResponse signin(SignInRequest request) {
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (Exception e) {
             throw new InvalidLoginDetailsException("Invalid login details provided.");
         }
 
-        var user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new InvalidLoginDetailsException("Invalid login details provided."));
 
-        var jwt = jwtService.generateToken(user);
-        return JwtAuthenticationResponse.builder().token(jwt).build();
+        String jwt = jwtService.generateToken(user);
+
+        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        jwtAuthenticationResponse.setToken(jwt);
+
+        return jwtAuthenticationResponse;
     }
 }
