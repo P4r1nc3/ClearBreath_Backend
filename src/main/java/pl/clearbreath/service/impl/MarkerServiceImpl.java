@@ -15,7 +15,7 @@ import pl.clearbreath.model.User;
 import pl.clearbreath.repository.MarkerRepository;
 import pl.clearbreath.service.CalculationService;
 import pl.clearbreath.service.MarkerService;
-import pl.clearbreath.service.PollutionService;
+import pl.clearbreath.service.pollution.PollutionService;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.WeatherService;
+import pl.clearbreath.service.weather.WeatherService;
 
 @Slf4j
 @RestController

@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.clearbreath.TestUtils;
 import pl.clearbreath.dao.response.AirQualityResponse;
-import pl.clearbreath.service.PollutionService;
+import pl.clearbreath.service.pollution.PollutionService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
