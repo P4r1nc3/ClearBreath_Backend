@@ -60,18 +60,17 @@ public class MarkerServiceImpl implements MarkerService {
         double lngStation = airQualityResponse.getData().getCity().getGeo().get(1);
         double distance = calculationService.haversine(lat, lng, latStation, lngStation);
 
-        Marker marker = Marker.builder()
-                .createdAt(LocalDateTime.now())
-                .lat(lat)
-                .lng(lng)
-                .latStation(latStation)
-                .lngStation(lngStation)
-                .distance(distance)
-                .user(user)
-                .continent(markerInfo.getContinent())
-                .countryName(markerInfo.getCountryName())
-                .city(markerInfo.getCity())
-                .build();
+        Marker marker = new Marker();
+        marker.setCreatedAt(LocalDateTime.now());
+        marker.setLat(lat);
+        marker.setLng(lng);
+        marker.setLatStation(latStation);
+        marker.setLngStation(lngStation);
+        marker.setDistance(distance);
+        marker.setUser(user);
+        marker.setContinent(markerInfo.getContinent());
+        marker.setCountryName(markerInfo.getCountryName());
+        marker.setCity(markerInfo.getCity());
 
         markerRepository.save(marker);
         return marker;
