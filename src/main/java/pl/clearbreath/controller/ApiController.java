@@ -17,9 +17,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
 public class ApiController {
-
     @GetMapping("/openapi")
     public ResponseEntity<String> getOpenApi() {
         try {
