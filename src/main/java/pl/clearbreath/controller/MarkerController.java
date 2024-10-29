@@ -1,7 +1,7 @@
 package pl.clearbreath.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,11 +16,15 @@ import pl.clearbreath.service.MarkerService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/markers")
 public class MarkerController {
-    private MarkerService markerService;
+    private final MarkerService markerService;
+
+    public MarkerController(MarkerService markerService) {
+        this.markerService = markerService;
+    }
 
     @PostMapping("/lat/{lat}/lng/{lng}")
     public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
