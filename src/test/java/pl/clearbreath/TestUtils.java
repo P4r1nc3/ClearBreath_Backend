@@ -61,7 +61,13 @@ public class TestUtils {
     }
 
     public static SignUpRequest createSignUpRequest() {
-        return new SignUpRequest("John", "Doe", "john@example.com", "password123");
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setFirstName("John");
+        signUpRequest.setLastName("Doe");
+        signUpRequest.setEmail("john@example.com");
+        signUpRequest.setPassword("password123");
+
+        return signUpRequest;
     }
 
     public static SignInRequest createSignInRequest() {
