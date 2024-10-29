@@ -1,6 +1,6 @@
 package pl.clearbreath.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/environmental")
 public class EnvironmentalController {
     @Qualifier("cached-pollution-service")
@@ -29,6 +29,11 @@ public class EnvironmentalController {
 
     @Qualifier("cached-weather-service")
     private final WeatherService weatherService;
+
+    public EnvironmentalController(PollutionService pollutionService, WeatherService weatherService) {
+        this.pollutionService = pollutionService;
+        this.weatherService = weatherService;
+    }
 
     @GetMapping("/lat/{lat}/lng/{lng}")
     public ResponseEntity<Map<String, Object>> getMarkerData(@PathVariable double lat, @PathVariable double lng) {
