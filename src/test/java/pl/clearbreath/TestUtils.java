@@ -78,7 +78,9 @@ public class TestUtils {
     }
 
     public static JwtAuthenticationResponse createJwtAuthenticationResponse() {
-        return new JwtAuthenticationResponse("jwt_token");
+        JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
+        jwtAuthenticationResponse.setToken("jwt_token");
+        return jwtAuthenticationResponse;
     }
 
     @SneakyThrows
