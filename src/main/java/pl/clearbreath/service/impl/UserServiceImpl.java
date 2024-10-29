@@ -14,14 +14,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MarkerRepository markerRepository;
     private final ApplicationContext applicationContext;
+
+    public UserServiceImpl(UserRepository userRepository,
+                           MarkerRepository markerRepository,
+                           ApplicationContext applicationContext) {
+        this.userRepository = userRepository;
+        this.markerRepository = markerRepository;
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public UserDetailsService userDetailsService() {
