@@ -1,6 +1,5 @@
 package pl.clearbreath.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class MarkerServiceImpl implements MarkerService {
     private final MarkerRepository markerRepository;
 
@@ -32,6 +30,14 @@ public class MarkerServiceImpl implements MarkerService {
     private final PollutionService pollutionService;
 
     private final CalculationService calculationService;
+
+    public MarkerServiceImpl(MarkerRepository markerRepository,
+                             PollutionService pollutionService,
+                             CalculationService calculationService) {
+        this.markerRepository = markerRepository;
+        this.pollutionService = pollutionService;
+        this.calculationService = calculationService;
+    }
 
     public List<Marker> getAllMarkers(User user) {
         return markerRepository.findByUser(user);
