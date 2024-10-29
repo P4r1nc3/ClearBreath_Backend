@@ -10,9 +10,7 @@ import pl.clearbreath.repository.UserRepository;
 import pl.clearbreath.repository.MarkerRepository;
 import pl.clearbreath.service.UserService;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +25,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String email) {
-                return userRepository.findByEmail(email)
-                        .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
-            }
-        };
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
     }
 
     @Transactional
