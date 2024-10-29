@@ -100,7 +100,9 @@ public class UserServiceImplTest {
 
     @Test
     public void testChangePassword_SamePasswordException() {
-        passwordRequest = new ChangePasswordRequest("oldPassword123", "oldPassword123");
+        passwordRequest = new ChangePasswordRequest();
+        passwordRequest.setOldPassword("oldPassword123");
+        passwordRequest.setNewPassword("oldPassword123");
 
         assertThrows(SamePasswordException.class, () -> userService.changePassword(testUser, passwordRequest));
         verify(userRepository, never()).save(testUser);

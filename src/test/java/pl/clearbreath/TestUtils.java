@@ -54,7 +54,10 @@ public class TestUtils {
     }
 
     public static ChangePasswordRequest createChangePasswordRequest() {
-        return new ChangePasswordRequest("oldPassword123", "newPassword123");
+        ChangePasswordRequest changePasswordRequest = new ChangePasswordRequest();
+        changePasswordRequest.setOldPassword("oldPassword123");
+        changePasswordRequest.setNewPassword("newPassword123");
+        return changePasswordRequest;
     }
 
     public static SignUpRequest createSignUpRequest() {
