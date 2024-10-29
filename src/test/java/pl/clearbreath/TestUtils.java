@@ -23,33 +23,32 @@ public class TestUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static Marker createMarker() {
-        Marker marker = Marker.builder()
-                .markerId(1L)
-                .lat(52.2297)
-                .lng(21.0122)
-                .latStation(52.2297)
-                .lngStation(21.0122)
-                .distance(5.0)
-                .continent("Europe")
-                .countryName("Poland")
-                .city("Warsaw")
-                .user(createUser())
-                .build();
+        Marker marker = new Marker();
+        marker.setMarkerId(1L);
+        marker.setLat(52.2297);
+        marker.setLng(21.0122);
+        marker.setLatStation(52.2297);
+        marker.setLngStation(21.0122);
+        marker.setDistance(5.0);
+        marker.setContinent("Europe");
+        marker.setCountryName("Poland");
+        marker.setCity("Warsaw");
+        marker.setUser(createUser());
+        marker.setCreatedAt(LocalDateTime.now());
 
         return marker;
     }
 
     public static User createUser() {
-        User user = User.builder()
-                .userId(1)
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .createdAt(LocalDateTime.now())
-                .password("hashedPassword")
-                .role(Role.USER)
-                .markers(new HashSet<>())
-                .build();
+        User user = new User();
+        user.setUserId(1);
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        user.setCreatedAt(LocalDateTime.now());
+        user.setPassword("hashedPassword");
+        user.setRole(Role.USER);
+        user.setMarkers(new HashSet<>());
 
         return user;
     }
