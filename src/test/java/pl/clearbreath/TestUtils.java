@@ -65,7 +65,10 @@ public class TestUtils {
     }
 
     public static SignInRequest createSignInRequest() {
-        return new SignInRequest("john@example.com", "password123");
+        SignInRequest signInRequest = new SignInRequest();
+        signInRequest.setEmail("john@example.com");
+        signInRequest.setPassword("password123");
+        return signInRequest;
     }
 
     public static JwtAuthenticationResponse createJwtAuthenticationResponse() {
