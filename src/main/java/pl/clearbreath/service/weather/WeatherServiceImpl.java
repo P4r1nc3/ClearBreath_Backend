@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl.weather;
+package pl.clearbreath.service.weather;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.clearbreath.Constants;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.WeatherService;
 
 @Slf4j
 @Service

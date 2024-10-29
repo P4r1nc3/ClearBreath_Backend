@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.clearbreath.dao.response.AirQualityResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.PollutionService;
-import pl.clearbreath.service.WeatherService;
+import pl.clearbreath.service.pollution.PollutionService;
+import pl.clearbreath.service.weather.WeatherService;
 
 import java.util.HashMap;
 import java.util.Map;

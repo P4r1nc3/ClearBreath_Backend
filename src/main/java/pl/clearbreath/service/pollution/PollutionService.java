@@ -1,4 +1,4 @@
-package pl.clearbreath.service;
+package pl.clearbreath.service.pollution;
 
 import pl.clearbreath.dao.response.AirQualityResponse;
 

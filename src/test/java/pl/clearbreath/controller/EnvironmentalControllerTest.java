@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import pl.clearbreath.TestUtils;
 import pl.clearbreath.dao.response.AirQualityResponse;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.PollutionService;
-import pl.clearbreath.service.WeatherService;
+import pl.clearbreath.service.pollution.PollutionService;
+import pl.clearbreath.service.weather.WeatherService;
 
 import java.util.Map;
 

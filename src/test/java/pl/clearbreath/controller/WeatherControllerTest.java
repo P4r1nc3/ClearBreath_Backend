@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.clearbreath.TestUtils;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.WeatherService;
+import pl.clearbreath.service.weather.WeatherService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

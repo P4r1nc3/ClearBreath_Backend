@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import pl.clearbreath.dao.response.AirQualityResponse;
-import pl.clearbreath.service.PollutionService;
+import pl.clearbreath.service.pollution.PollutionService;
 
 @Slf4j
 @RestController
