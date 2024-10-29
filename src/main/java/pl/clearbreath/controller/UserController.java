@@ -2,7 +2,6 @@ package pl.clearbreath.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +18,18 @@ import pl.clearbreath.dao.request.ChangePasswordRequest;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping
     public User getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        return user;
+        return (User) authentication.getPrincipal();
     }
 
     @DeleteMapping
