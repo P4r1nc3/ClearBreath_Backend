@@ -61,9 +61,10 @@ public class MarkerControllerTest {
         double lng = testMarker.getLng();
         when(markerService.saveMarker(lat, lng, testUser)).thenReturn(testMarker);
 
-        Marker savedMarker = markerController.saveMarker(lat, lng);
+        ResponseEntity<Marker> savedMarker = markerController.saveMarker(lat, lng);
 
-        assertEquals(testMarker, savedMarker);
+        assertEquals(OK, savedMarker.getStatusCode());
+        assertEquals(testMarker, savedMarker.getBody());
         verify(markerService, times(1)).saveMarker(lat, lng, testUser);
     }
 
@@ -73,9 +74,10 @@ public class MarkerControllerTest {
         double lng = testMarker.getLng();
         when(markerService.getMarker(lat, lng, testUser)).thenReturn(testMarker);
 
-        Marker retrievedMarker = markerController.getMarker(lat, lng);
+        ResponseEntity<Marker> retrievedMarker = markerController.getMarker(lat, lng);
 
-        assertEquals(testMarker, retrievedMarker);
+        assertEquals(OK, retrievedMarker.getStatusCode());
+        assertEquals(testMarker, retrievedMarker.getBody());
         verify(markerService, times(1)).getMarker(lat, lng, testUser);
     }
 
@@ -84,10 +86,11 @@ public class MarkerControllerTest {
         List<Marker> markers = List.of(testMarker);
         when(markerService.getAllMarkers(testUser)).thenReturn(markers);
 
-        List<Marker> retrievedMarkers = markerController.getAllMarkers();
+        ResponseEntity<List<Marker>> retrievedMarkers = markerController.getAllMarkers();
 
-        assertEquals(1, retrievedMarkers.size());
-        assertEquals(testMarker, retrievedMarkers.get(0));
+        assertEquals(OK, retrievedMarkers.getStatusCode());
+        assertEquals(1, retrievedMarkers.getBody().size());
+        assertEquals(testMarker, retrievedMarkers.getBody().get(0));
         verify(markerService, times(1)).getAllMarkers(testUser);
     }
 
@@ -96,7 +99,7 @@ public class MarkerControllerTest {
         double lat = testMarker.getLat();
         double lng = testMarker.getLng();
 
-        ResponseEntity<Void> response = markerController.deleteMarker(lat, lng);
+        ResponseEntity<?> response = markerController.deleteMarker(lat, lng);
 
         assertEquals(NO_CONTENT, response.getStatusCode());
         verify(markerService, times(1)).deleteMarker(lat, lng, testUser);
@@ -104,7 +107,7 @@ public class MarkerControllerTest {
 
     @Test
     public void testDeleteAllMarkers() {
-        ResponseEntity<Void> response = markerController.deleteAllMarkers();
+        ResponseEntity<?> response = markerController.deleteAllMarkers();
 
         assertEquals(NO_CONTENT, response.getStatusCode());
         verify(markerService, times(1)).deleteAllMarkers(testUser);
