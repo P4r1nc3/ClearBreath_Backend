@@ -27,9 +27,10 @@ public class UserController {
     }
 
     @GetMapping
-    public User getUserData() {
+    public ResponseEntity<User> getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping
@@ -37,7 +38,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         userService.deleteUser(user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/change-password")
@@ -45,7 +46,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         userService.changePassword(user, changePasswordRequest);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler({InvalidPasswordException.class, SamePasswordException.class})

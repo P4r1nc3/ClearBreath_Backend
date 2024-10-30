@@ -27,40 +27,43 @@ public class MarkerController {
     }
 
     @PostMapping("/lat/{lat}/lng/{lng}")
-    public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<Marker> saveMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.saveMarker(lat, lng, user);
+        Marker marker = markerService.saveMarker(lat, lng, user);
+        return new ResponseEntity<>(marker, HttpStatus.OK);
     }
 
     @GetMapping("/lat/{lat}/lng/{lng}")
-    public Marker getMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<Marker> getMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.getMarker(lat, lng, user);
+        Marker marker = markerService.getMarker(lat, lng, user);
+        return new ResponseEntity<>(marker, HttpStatus.OK);
     }
 
     @GetMapping
-    public List<Marker> getAllMarkers() {
+    public ResponseEntity<List<Marker>> getAllMarkers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.getAllMarkers(user);
+        List<Marker> markers = markerService.getAllMarkers(user);
+        return new ResponseEntity<>(markers, HttpStatus.OK);
     }
 
     @DeleteMapping("/lat/{lat}/lng/{lng}")
-    public ResponseEntity<Void> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<?> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteMarker(lat, lng, user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAllMarkers() {
+    public ResponseEntity<?> deleteAllMarkers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteAllMarkers(user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(MarkerNotFoundException.class)
