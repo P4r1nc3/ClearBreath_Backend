@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl.pollution;
+package pl.clearbreath.service.pollution;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.clearbreath.dao.response.AirQualityResponse;
-import pl.clearbreath.service.PollutionService;
 
 import java.util.concurrent.TimeUnit;
 

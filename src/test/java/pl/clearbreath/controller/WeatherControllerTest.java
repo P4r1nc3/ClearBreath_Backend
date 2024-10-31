@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import pl.clearbreath.TestUtils;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.WeatherService;
+import pl.clearbreath.service.weather.WeatherService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.OK;
 
 public class WeatherControllerTest {
 
@@ -34,9 +37,10 @@ public class WeatherControllerTest {
 
         when(weatherService.getWeatherForecast(lat, lng)).thenReturn(mockResponse);
 
-        WeatherForecastResponse response = weatherController.getMarkerForecast(lat, lng);
+        ResponseEntity<WeatherForecastResponse> response = weatherController.getMarkerForecast(lat, lng);
 
-        assertEquals(mockResponse, response);
+        assertEquals(OK, response.getStatusCode());
+        assertEquals(mockResponse, response.getBody());
         verify(weatherService, times(1)).getWeatherForecast(lat, lng);
     }
 }

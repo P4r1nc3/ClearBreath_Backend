@@ -54,9 +54,10 @@ public class UserControllerTest {
 
     @Test
     public void testGetUserData() {
-        User returnedUser = userController.getUserData();
+        ResponseEntity<User> returnedUser = userController.getUserData();
 
-        assertEquals(testUser, returnedUser);
+        assertEquals(OK, returnedUser.getStatusCode());
+        assertEquals(testUser, returnedUser.getBody());
         verify(securityContext, times(1)).getAuthentication();
     }
 

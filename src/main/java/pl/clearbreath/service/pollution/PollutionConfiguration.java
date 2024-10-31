@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl.pollution;
+package pl.clearbreath.service.pollution;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import pl.clearbreath.service.PollutionService;
 
 @Configuration
 public class PollutionConfiguration {

@@ -14,7 +14,7 @@ import pl.clearbreath.exception.MarkerNotFoundException;
 import pl.clearbreath.model.Marker;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.MarkerRepository;
-import pl.clearbreath.service.impl.MarkerServiceImpl;
+import pl.clearbreath.service.pollution.PollutionService;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +38,7 @@ public class MarkerServiceImplTest {
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private MarkerServiceImpl markerService;
+    private MarkerService markerService;
 
     private User testUser;
     private Marker testMarker;

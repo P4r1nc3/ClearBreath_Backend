@@ -1,4 +1,4 @@
-package pl.clearbreath.service.impl.weather;
+package pl.clearbreath.service.weather;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.clearbreath.dao.response.WeatherForecastResponse;
-import pl.clearbreath.service.WeatherService;
 
 import java.util.concurrent.TimeUnit;
 

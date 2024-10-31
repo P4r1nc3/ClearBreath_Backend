@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 import pl.clearbreath.TestUtils;
 import pl.clearbreath.dao.response.AirQualityResponse;
-import pl.clearbreath.service.PollutionService;
+import pl.clearbreath.service.pollution.PollutionService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.OK;
 
 public class PollutionControllerTest {
 
@@ -34,9 +36,10 @@ public class PollutionControllerTest {
 
         when(pollutionService.getPollution(lat, lng)).thenReturn(mockResponse);
 
-        AirQualityResponse response = pollutionController.getMarker(lat, lng);
+        ResponseEntity<AirQualityResponse> response = pollutionController.getMarker(lat, lng);
 
-        assertEquals(mockResponse, response);
+        assertEquals(OK, response.getStatusCode());
+        assertEquals(mockResponse, response.getBody());
         verify(pollutionService, times(1)).getPollution(lat, lng);
     }
 }

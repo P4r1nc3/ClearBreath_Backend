@@ -1,7 +1,7 @@
 package pl.clearbreath.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,47 +16,54 @@ import pl.clearbreath.service.MarkerService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/markers")
 public class MarkerController {
-    private MarkerService markerService;
+    private final MarkerService markerService;
+
+    public MarkerController(MarkerService markerService) {
+        this.markerService = markerService;
+    }
 
     @PostMapping("/lat/{lat}/lng/{lng}")
-    public Marker saveMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<Marker> saveMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.saveMarker(lat, lng, user);
+        Marker marker = markerService.saveMarker(lat, lng, user);
+        return new ResponseEntity<>(marker, HttpStatus.OK);
     }
 
     @GetMapping("/lat/{lat}/lng/{lng}")
-    public Marker getMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<Marker> getMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.getMarker(lat, lng, user);
+        Marker marker = markerService.getMarker(lat, lng, user);
+        return new ResponseEntity<>(marker, HttpStatus.OK);
     }
 
     @GetMapping
-    public List<Marker> getAllMarkers() {
+    public ResponseEntity<List<Marker>> getAllMarkers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return markerService.getAllMarkers(user);
+        List<Marker> markers = markerService.getAllMarkers(user);
+        return new ResponseEntity<>(markers, HttpStatus.OK);
     }
 
     @DeleteMapping("/lat/{lat}/lng/{lng}")
-    public ResponseEntity<Void> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
+    public ResponseEntity<?> deleteMarker(@PathVariable double lat, @PathVariable double lng) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteMarker(lat, lng, user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAllMarkers() {
+    public ResponseEntity<?> deleteAllMarkers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         markerService.deleteAllMarkers(user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(MarkerNotFoundException.class)
