@@ -15,7 +15,6 @@ import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
 import pl.clearbreath.repository.UserRepository;
 import pl.clearbreath.repository.MarkerRepository;
-import pl.clearbreath.service.impl.UserServiceImpl;
 
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ public class UserServiceImplTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserService userService;
 
     private User testUser;
     private ChangePasswordRequest passwordRequest;
@@ -100,7 +99,9 @@ public class UserServiceImplTest {
 
     @Test
     public void testChangePassword_SamePasswordException() {
-        passwordRequest = new ChangePasswordRequest("oldPassword123", "oldPassword123");
+        passwordRequest = new ChangePasswordRequest();
+        passwordRequest.setOldPassword("oldPassword123");
+        passwordRequest.setNewPassword("oldPassword123");
 
         assertThrows(SamePasswordException.class, () -> userService.changePassword(testUser, passwordRequest));
         verify(userRepository, never()).save(testUser);

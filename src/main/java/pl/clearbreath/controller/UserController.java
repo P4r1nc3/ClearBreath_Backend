@@ -2,7 +2,6 @@ package pl.clearbreath.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,21 +13,24 @@ import pl.clearbreath.exception.InvalidPasswordException;
 import pl.clearbreath.exception.SamePasswordException;
 import pl.clearbreath.exception.UserNotFoundException;
 import pl.clearbreath.model.User;
-import pl.clearbreath.service.UserService;
 import pl.clearbreath.dao.request.ChangePasswordRequest;
+import pl.clearbreath.service.UserService;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping
-    public User getUserData() {
+    public ResponseEntity<User> getUserData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
-        return user;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping
@@ -36,7 +38,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         userService.deleteUser(user);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/change-password")
@@ -44,7 +46,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
         userService.changePassword(user, changePasswordRequest);
-        return ResponseEntity.noContent().build();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler({InvalidPasswordException.class, SamePasswordException.class})

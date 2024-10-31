@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import pl.clearbreath.ControllerUtils;
-import pl.clearbreath.service.JwtService;
-import pl.clearbreath.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +21,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import pl.clearbreath.service.JwtService;
+import pl.clearbreath.service.UserService;
 
 @Component
 @RequiredArgsConstructor
