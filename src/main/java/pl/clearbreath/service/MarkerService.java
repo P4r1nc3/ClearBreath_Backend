@@ -18,6 +18,8 @@ import pl.clearbreath.service.pollution.PollutionService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -57,9 +59,19 @@ public class MarkerService {
             throw new MarkerAlreadyExistException("A marker already exists at the specified lat: " + lat + " and lng: " + lng + ".");
         }
 
-        MarkerInfoResponse markerInfo = getMarkerData(lat, lng);
+        CompletableFuture<MarkerInfoResponse> markerInfoFuture = CompletableFuture.supplyAsync(() -> getMarkerData(lat, lng));
+        CompletableFuture<AirQualityResponse> airQualityFuture = CompletableFuture.supplyAsync(() -> pollutionService.getPollution(lat, lng));
 
-        AirQualityResponse airQualityResponse = pollutionService.getPollution(lat, lng);
+        MarkerInfoResponse markerInfo;
+        AirQualityResponse airQualityResponse;
+        try {
+            markerInfo = markerInfoFuture.get();
+            airQualityResponse = airQualityFuture.get();
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Error fetching data for marker.", e);
+        }
+
         double latStation = airQualityResponse.getData().getCity().getGeo().get(0);
         double lngStation = airQualityResponse.getData().getCity().getGeo().get(1);
         double distance = calculationService.haversine(lat, lng, latStation, lngStation);
