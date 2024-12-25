@@ -16,9 +16,7 @@ import pl.clearbreath.service.weather.WeatherService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @RestController
@@ -42,21 +40,16 @@ public class EnvironmentalController {
     }
 
     private Map<String, Object> fetchMarkerData(double lat, double lng) {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-
-        Future<AirQualityResponse> airQualityFuture = executorService.submit(() -> pollutionService.getPollution(lat, lng));
-        Future<WeatherForecastResponse> weatherForecastFuture = executorService.submit(() -> weatherService.getWeatherForecast(lat, lng));
-
         Map<String, Object> response = new HashMap<>();
+
+        CompletableFuture<AirQualityResponse> airQualityFuture = CompletableFuture.supplyAsync(() -> pollutionService.getPollution(lat, lng));
+        CompletableFuture<WeatherForecastResponse> weatherForecastFuture = CompletableFuture.supplyAsync(() -> weatherService.getWeatherForecast(lat, lng));
 
         try {
             response.put("airQuality", airQualityFuture.get());
             response.put("weatherForecast", weatherForecastFuture.get());
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            // 500 Internal Server Error
-        } finally {
-            executorService.shutdown();
         }
 
         return response;
